@@ -111,9 +111,9 @@ spec:
   {{- range .Values.ambassador.loadBalancerSourceRanges }}
    - {{ . }} 
   {{- end }}
-  {{- else }}
-  loadBalancerSourceRanges: 
-  - 0.0.0.0/0
+#  {{- else }}
+#  loadBalancerSourceRanges:
+#  - 0.0.0.0/0
   {{- end }} 
   {{- if .Values.service.externalIPs }}
   externalIPs:

@@ -62,9 +62,9 @@ spec:
       dburl: "jdbc:mysql://{{ peer.name }}-tessera:3306/demodb"
       dbusername: demouser
 {% if network.config.tm_tls == 'strict' %}
-      url: "https://{{ peer.name }}.{{ external_url }}:{{ peer.transaction_manager.ambassador }}"
+      url: "https://{{ peer.name }}-tessera.{{ external_url }}:{{ peer.transaction_manager.ambassador }}"
 {% else %}
-      url: "http://{{ peer.name }}.{{ external_url }}:{{ peer.transaction_manager.ambassador }}"
+      url: "http://{{ peer.name }}-tessera.{{ external_url }}:{{ peer.transaction_manager.ambassador }}"
 {% endif %}
       clienturl: "http://{{ peer.name }}-tessera:{{ peer.transaction_manager.clientport }}" #TODO: Enable tls strict for q2t
       othernodes:
