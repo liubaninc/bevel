@@ -108,9 +108,10 @@ spec:
     app.kubernetes.io/instance: {{ .Release.Name }}
   {{- if .Values.ambassador.loadBalancerSourceRanges }}
   loadBalancerSourceRanges:
-  {{- range .Values.ambassador.loadBalancerSourceRanges }}
-   - {{ . }} 
-  {{- end }}
+    {{- toYaml . | nindent 4 }}
+#  {{- range .Values.`ambassador`.loadBalancerSourceRanges }}
+#   - {{ . }}
+#  {{- end }}
 #  {{- else }}
 #  loadBalancerSourceRanges:
 #  - 0.0.0.0/0
