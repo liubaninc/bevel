@@ -76,11 +76,11 @@ spec:
             - name: PROVISIONER_NAME            #这是这个容器内置的变量
               value: kubernetes.io/aws-ebs     #这是上面变量的值（名字）
             - name: NFS_SERVER                  #内置变量，用于指定nfs服务的IP
-              value: 8.211.163.33
+              value: 152.32.210.47
             - name: NFS_PATH                    #内置变量，指定的是nfs共享的目录
-              value: /root/nfs
+              value: /home/ubuntu/nfs
       volumes:                                  #这下面是指定上面挂载到容器内的nfs的路径及IP
         - name: nfs-client-root
           nfs:
-            server: 8.211.163.33
-            path: /root/nfs
+            server: 152.32.210.47
+            path: /home/ubuntu/nfs
