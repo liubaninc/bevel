@@ -4,15 +4,16 @@
 #  SPDX-License-Identifier: Apache-2.0
 ##############################################################################################
 
-{{- if eq .Values.proxy.provider "haproxy" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Values.node.name }}
   namespace: {{ .Values.metadata.namespace }}
+  {{- if eq .Values.proxy.provider "haproxy" }}
   annotations:
     kubernetes.io/ingress.class: "haproxy"
-    ingress.kubernetes.io/ssl-passthrough: "true"  
+    ingress.kubernetes.io/ssl-passthrough: "true"
+  {{- end }}
 spec:
   rules:
   - host: {{ .Values.node.name }}rpc.{{ .Values.proxy.external_url }}
@@ -47,4 +48,3 @@ spec:
             port:
               number: {{ .Values.node.ports.raft }}
   {{- end }}
-{{- end }}
