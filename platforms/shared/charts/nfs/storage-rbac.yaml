@@ -68,7 +68,8 @@ spec:
       serviceAccount: nfs-client-provisioner    #指定账户
       containers:
         - name: nfs-client-provisioner
-          image: registry.cn-hangzhou.aliyuncs.com/open-ali/nfs-client-provisioner
+          #image: registry.cn-hangzhou.aliyuncs.com/open-ali/nfs-client-provisioner
+          image: gcr.io/k8s-staging-sig-storage/nfs-subdir-external-provisioner:v4.0.0
           volumeMounts:
             - name: nfs-client-root
               mountPath:  /persistentvolumes   #指定容器内的挂载目录
