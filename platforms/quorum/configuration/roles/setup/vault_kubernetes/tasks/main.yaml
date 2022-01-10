@@ -56,7 +56,8 @@
 # This task runs only when {{component_path}} is not already created
 - name: Vault Auth enable for organisation
   shell: |
-    vault auth enable --path="{{ component_auth }}" kubernetes
+    vault auth enable --path={{ component_auth }} kubernetes
+    vault secrets enable -version=2 -path={{ vault.secret_path | default('secretsv2') }} kv
   environment:
     VAULT_ADDR: "{{ vault.url }}"
     VAULT_TOKEN: "{{ vault.root_token }}"
