@@ -109,4 +109,20 @@
   loop: "{{ network['organizations'] }}"
   loop_control:
     loop_var: org
-  when: vault_check|default(0)|int != 0 and ( not add_new_org )
+  when: vault_check|default(0)|int != 0 
+
+# This tasks copy the genesis to the vault
+- name: Copy existing genesis to Vault
+  shell: |
+    vault kv put {{ vault.secret_path | default('secretsv2') }}/{{ component_ns }}/crypto/genesis genesisfile="{{ genesis }}"
+  environment:
+    VAULT_ADDR: "{{ vault.url }}"
+    VAULT_TOKEN: "{{ vault.root_token }}"
+  vars:
+    genesis: "{{ lookup('file', '{{ network.config.genesis }}') | b64encode }}"
+    component_ns: "{{ org.name }}-quo"
+    vault: "{{ org.vault }}"
+  loop: "{{ network['organizations'] }}"
+  loop_control:
+    loop_var: org
+  when: vault_genesis_result.failed and add_new_org
