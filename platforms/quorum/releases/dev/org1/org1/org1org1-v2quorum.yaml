@@ -1,0 +1,84 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: org1org1-v2quorum
+  namespace: org1-quo
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: org1org1-v2quorum
+  helmVersion: v3
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local10
+    path: platforms/quorum/charts/node_quorum_validator  
+  values:
+    replicaCount: 1
+    metadata:
+      namespace: org1-quo
+      labels:
+    images:
+      node: quorumengineering/quorum:21.4.2
+      alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+      tessera: quorumengineering/tessera:21.4.0
+      busybox: busybox
+      mysql: mysql/mysql-server:5.7
+    node:
+      name: org1-v2
+      status: default
+      consensus: ibft
+      subject: O=org1-v2,OU=org1-v2,L=42.36/-71.06/Boston,C=US
+      mountPath: /etc/quorum/qdata
+      imagePullSecret: regcred
+      keystore: keystore_1
+      
+      servicetype: ClusterIP
+      lock: false
+      ports:
+        rpc: 8546
+        raft: 50401
+        tm: 443
+        quorum: 21000
+        db: 3306
+        cakeshop: 8080
+      dbname: demodb
+      mysqluser: demouser
+    vault:
+      address: http://101.36.106.59:8200
+      secretprefix: secretsv2/data/org1-quo/crypto/org1-v2
+      serviceaccountname: vault-auth
+      keyname: quorum
+      tm_keyname: transaction
+      role: vault-role
+      authpath: quorumorg1
+    tessera:
+      dburl: "jdbc:mysql://org1-v2-tessera:3306/demodb"
+      dbusername: demouser
+      url: "https://org1-v2.ltc.blockchain.liubaninc.cn:443"
+      clienturl: "http://org1-v2-tessera:8888" #TODO: Enable tls strict for q2t
+      othernodes:
+        - url: https://org1-v0.ltc.blockchain.liubaninc.cn
+        - url: https://org1-v1.ltc.blockchain.liubaninc.cn
+        - url: https://org1-v2.ltc.blockchain.liubaninc.cn
+        - url: https://org1-m0.ltc.blockchain.liubaninc.cn
+      tls: "STRICT"
+      trust: "TOFU"
+    genesis: eyJjb25maWciOiB7ImNoYWluSWQiOiAxMCwgImhvbWVzdGVhZEJsb2NrIjogMCwgImVpcDE1MEJsb2NrIjogMCwgImVpcDE1MEhhc2giOiAiMHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIiwgImVpcDE1NUJsb2NrIjogMCwgImVpcDE1OEJsb2NrIjogMCwgImJ5emFudGl1bUJsb2NrIjogMCwgImNvbnN0YW50aW5vcGxlQmxvY2siOiAwLCAicGV0ZXJzYnVyZ0Jsb2NrIjogMCwgImlzdGFuYnVsQmxvY2siOiAwLCAiaXN0YW5idWwiOiB7ImVwb2NoIjogMzAwMDAsICJwb2xpY3kiOiAwLCAiY2VpbDJOYnkzQmxvY2siOiAwfSwgInR4blNpemVMaW1pdCI6IDEyOCwgInFpcDcxNEJsb2NrIjogMCwgImlzTVBTIjogZmFsc2UsICJpc1F1b3J1bSI6IHRydWUsICJtYXhDb2RlU2l6ZUNvbmZpZyI6IFt7ImJsb2NrIjogMCwgInNpemUiOiAxMjh9XX0sICJub25jZSI6ICIweDAiLCAidGltZXN0YW1wIjogIjB4NjFkZDUyZTIiLCAiZXh0cmFEYXRhIjogIjB4MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMGY4OWFmODU0OTRlNzYzMGY4MTI3NzVkNmM4MWUzODY5ZDVlMjhiOThlOTc2N2Q3ZTVmOTQ3ZjRkOTExNGNhNDE0MTczMWJkMWVmNWZmMzBiYTliMjgyMzJjMjc4OTQ3ZDkxOTYzMmU5YWQ4ODU1MzIwYjFiNDU3NjcwNTM1ZTQ0ZGI4MjAwOTQxZmUwYmY4MDI3NDFmZmY0MjcxNWUwZjdhZWU1YmViMWMxMmExNWQ0Yjg0MTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBjMCIsICJnYXNMaW1pdCI6ICIweGUwMDAwMDAwIiwgImRpZmZpY3VsdHkiOiAiMHgxIiwgIm1peEhhc2giOiAiMHg2Mzc0Njk2MzYxNmMyMDYyNzk3YTYxNmU3NDY5NmU2NTIwNjY2MTc1NmM3NDIwNzQ2ZjZjNjU3MjYxNmU2MzY1IiwgImNvaW5iYXNlIjogIjB4MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsICJhbGxvYyI6IHsiMWZlMGJmODAyNzQxZmZmNDI3MTVlMGY3YWVlNWJlYjFjMTJhMTVkNCI6IHsiYmFsYW5jZSI6ICIweDQ0NmMzYjE1Zjk5MjY2ODdkMmM0MDUzNGZkYjU2NDAwMDAwMDAwMDAwMCJ9LCAiN2Q5MTk2MzJlOWFkODg1NTMyMGIxYjQ1NzY3MDUzNWU0NGRiODIwMCI6IHsiYmFsYW5jZSI6ICIweDQ0NmMzYjE1Zjk5MjY2ODdkMmM0MDUzNGZkYjU2NDAwMDAwMDAwMDAwMCJ9LCAiN2Y0ZDkxMTRjYTQxNDE3MzFiZDFlZjVmZjMwYmE5YjI4MjMyYzI3OCI6IHsiYmFsYW5jZSI6ICIweDQ0NmMzYjE1Zjk5MjY2ODdkMmM0MDUzNGZkYjU2NDAwMDAwMDAwMDAwMCJ9LCAiZTc2MzBmODEyNzc1ZDZjODFlMzg2OWQ1ZTI4Yjk4ZTk3NjdkN2U1ZiI6IHsiYmFsYW5jZSI6ICIweDQ0NmMzYjE1Zjk5MjY2ODdkMmM0MDUzNGZkYjU2NDAwMDAwMDAwMDAwMCJ9fSwgIm51bWJlciI6ICIweDAiLCAiZ2FzVXNlZCI6ICIweDAiLCAicGFyZW50SGFzaCI6ICIweDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAifQ==
+    staticnodes: 
+      [
+    "enode://150d1e4e731ef677ba433c0a939c5dc803e74779d1a9060bffd132761223ea36e9a89fa8cb0d626a04894abe93c65e8275872693dde0cd932e2a5fc6cb50e8ea@org1-v0.ltc.blockchain.liubaninc.cn:10?discport=0",
+    "enode://020b5a9852fd6b3a34c8870004e12ce9e34f799b451ee9bf013c24bf3c7dfe4499edb66e24a829943571479b62b4ac330738511a6e26beafb679dcda6ee4272b@org1-v1.ltc.blockchain.liubaninc.cn:20?discport=0",
+    "enode://a301a7d8d731e8746428449ad208c5721ad03e73acfaccbd26d9db28648638afe3aec23097ce594dfa467b3f5434a2e8e88c9dc9fc8289284c43613efb408502@org1-v2.ltc.blockchain.liubaninc.cn:30?discport=0",
+    "enode://f0af80c4575f2305c53a06d73100175770a3950bfe5e4d3f8df787468df81630f5cda3f2502c9fc30f869c09ad55af58cdfa015f428e0c67049c131e370458ff@org1-m0.ltc.blockchain.liubaninc.cn:0?discport=0"
+]
+    proxy:
+      provider: "ambassador"
+      external_url: org1-v2.ltc.blockchain.liubaninc.cn
+      portTM: 443
+      rpcport: 31
+      quorumport: 30
+      cakeshopport: 34
+    storage:
+      storageclassname: awsstorageclass
+      storagesize: 1Gi
+      dbstorage: 1Gi
