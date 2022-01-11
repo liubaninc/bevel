@@ -18,3 +18,26 @@ metadata:
     {{- include "labels.custom" . | nindent 2 }}
 data:
   genesis.json.base64: {{ .Values.genesis | quote }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cakeshop-{{ .Values.node.name }}
+  namespace: {{ .Values.metadata.namespace }}
+  labels:
+    app.kubernetes.io/name: cakeshop-{{ .Values.node.name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "labels.custom" . | nindent 2 }}
+data:
+  application.properties: |-
+    cakeshop.initialnodes=/cakeshop/data/local/nodes.json
+  nodes.json: |-
+    [
+      {
+        "name": "{{ .Values.node.name }}",
+        "rpcUrl": "http://{{ .Values.node.name }}:{{ .Values.node.ports.rpc }}",
+        "transactionManagerUrl": "http://{{ .Values.node.name }}-tessera:9080"
+      }
+    ]

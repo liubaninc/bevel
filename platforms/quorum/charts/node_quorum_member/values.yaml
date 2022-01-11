@@ -37,6 +37,8 @@ images:
   busybox: busybox
   #Provide the valid image name and version for MySQL. This is used as the DB for TM
   mysql: mysql/mysql-server:5.7
+  #Provides tools for attaching to nodes, exploring the state of the chain, and working with contracts.
+  cakeshop: quorumengineering/cakeshop:0.12.1
 
 node:
   #Provide the name for Quorum node
@@ -71,6 +73,7 @@ node:
     tm: 15013
     quorum: 21000
     db: 3306
+    cakeshop: 8080
   #Provide the mysql DB name
   #Eg. dbname: demodb
   dbname: 
