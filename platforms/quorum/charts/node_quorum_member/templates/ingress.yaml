@@ -48,3 +48,13 @@ spec:
             port:
               number: {{ .Values.node.ports.raft }}
   {{- end }}
+  - host: {{ .Values.node.name }}cakeshop.{{ .Values.proxy.external_url }}
+    http:
+      paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.node.name }}
+                port:
+                  number: {{ .Values.node.ports.cakeshop }}

@@ -58,6 +58,14 @@ spec:
             items:
               - key: genesis.json.base64
                 path: genesis.json.base64
+              - key: application.properties
+                path: application.properties
+        - name: cakeshop-config
+          configMap:
+            name: cakshop-{{ .Values.node.name }}
+            items:
+              - key: nodes.json
+                path: nodes.json
       initContainers:
       - name: certificates-init
         image: {{ .Values.images.alpineutils }}
@@ -155,6 +163,20 @@ spec:
         - name: {{ .Values.node.name }}-genesis-volume
           mountPath: {{ .Values.node.mountPath }}/genesis
       containers:
+      - name: quorum-cakeshop
+        image: "{{ .Values.images.cakeshop }}"
+        ports:
+          - containerPort: {{ .Values.node.ports.cakeshop }}
+        volumeMounts:
+          - name: {{ .Values.node.name }}-pv
+            mountPath: /cakeshop/data
+            subPath: cakeshop
+          - name: cakeshop-config
+            mountPath: /cakeshop/data/local/nodes.json
+            subPath: nodes.json
+          - name: cakeshop-config
+            mountPath: /cakeshop/data/local/application.properties
+            subPath: application.properties
       - name: quorum
         image: "{{ .Values.images.node }}"
         command: ["sh"]

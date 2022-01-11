@@ -42,6 +42,12 @@ metadata:
       port: {{ .Values.proxy.portRaft }}
       service: {{ .Values.node.name }}.{{ .Values.metadata.namespace }}:{{ .Values.node.ports.raft }}
       {{- end }}
+      ---
+      apiVersion: ambassador/v2
+      kind: TCPMapping
+      name: {{ .Values.node.name }}-cakeshop
+      port: {{ .Values.proxy.cakeshopport }}
+      service: {{ .Values.node.name }}.{{ .Values.metadata.namespace }}:{{ .Values.node.ports.cakeshop }}
     {{- end }}
   creationTimestamp: null
   labels:
@@ -74,5 +80,9 @@ spec:
     protocol: TCP
     port: {{ .Values.node.ports.quorum }}
     targetPort: {{ .Values.node.ports.quorum }}
+  - name: cakeshop-listener
+    protocol: TCP
+    port: {{ .Values.node.ports.cakeshop }}
+    targetPort: {{ .Values.node.ports.cakeshop }}
   selector:
     service.rpc: {{ .Values.node.name }}

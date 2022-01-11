@@ -48,6 +48,7 @@ spec:
         tm: {{ peer.transaction_manager.port }}
         quorum: {{ peer.p2p.port }}
         db: {{ peer.db.port }}
+        cakeshop: {{ peer.cakeshop.port }}
       dbname: demodb
       mysqluser: demouser
     vault:
@@ -85,6 +86,7 @@ spec:
 {% if network.config.consensus == 'raft' %}  
       portRaft: {{ peer.raft.ambassador }}
 {% endif %}
+      cakeshopport: {{ peer.cakeshop.ambassador }}
     storage:
       storageclassname: {{ storageclass_name }}
       storagesize: 1Gi
