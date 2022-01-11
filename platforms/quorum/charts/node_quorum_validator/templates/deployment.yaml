@@ -58,14 +58,14 @@ spec:
             items:
               - key: genesis.json.base64
                 path: genesis.json.base64
-              - key: application.properties
-                path: application.properties
         - name: cakeshop-config
           configMap:
             name: cakeshop-{{ .Values.node.name }}
             items:
               - key: nodes.json
                 path: nodes.json
+              - key: application.properties
+                path: application.properties
       initContainers:
       - name: certificates-init
         image: {{ .Values.images.alpineutils }}
