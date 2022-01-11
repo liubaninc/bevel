@@ -60,7 +60,7 @@ spec:
                 path: genesis.json.base64
         - name: cakeshop-config
           configMap:
-            name: cakshop-{{ .Values.node.name }}
+            name: cakeshop-{{ .Values.node.name }}
             items:
               - key: nodes.json
                 path: nodes.json

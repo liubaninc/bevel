@@ -62,7 +62,7 @@ spec:
                 path: application.properties
         - name: cakeshop-config
           configMap:
-            name: cakshop-{{ .Values.node.name }}
+            name: cakeshop-{{ .Values.node.name }}
             items:
               - key: nodes.json
                 path: nodes.json
