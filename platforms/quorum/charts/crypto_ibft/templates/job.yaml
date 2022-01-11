@@ -180,7 +180,8 @@ spec:
           echo $nodekey >> nodekey
           echo $GETH_PASSPHRASE >> password
           bootnode --nodekey nodekey --writeaddress >> enode
-          geth account new --datadir ${PEER_NAME} --password password
+          # geth account new --datadir ${PEER_NAME} --password password
+          geth account import nodekey --datadir ${PEER_NAME} --password password
           cp ${PEER_NAME}/keystore/* keystorefile
           tr -d "\n\r" < keystorefile > newchange
           openssl base64 -in newchange -out base64_keystore
