@@ -1,0 +1,29 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: meng-org-m0-tessera-job
+  namespace: meng-org-quo
+  annotations:
+    flux.weave.works/automated: "false"
+spec:
+  releaseName: meng-org-m0-tessera-job
+  chart:
+    path: platforms/quorum/charts/tessera_key_mgmt
+    git: https://github.com/liubaninc/bevel.git
+    ref: local10
+  values:
+    peer:
+      name: meng-org-m0  
+    metadata:
+      name: meng-org-m0-tessera-job
+      namespace: meng-org-quo    
+    image:      
+      repository: quorumengineering/tessera:21.4.0
+      pullSecret: regcred
+    vault:
+      address: http://101.36.106.59:8200
+      authpath: quorummeng-org
+      keyprefix: meng-org-quo/crypto
+      role: vault-role
+      serviceaccountname: vault-auth
+      tmprefix: secretsv2/data/meng-org-quo/crypto
