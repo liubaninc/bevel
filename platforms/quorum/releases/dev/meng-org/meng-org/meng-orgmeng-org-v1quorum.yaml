@@ -1,0 +1,84 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: meng-orgmeng-org-v1quorum
+  namespace: meng-org-quo
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: meng-orgmeng-org-v1quorum
+  helmVersion: v3
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local10
+    path: platforms/quorum/charts/node_quorum_validator  
+  values:
+    replicaCount: 1
+    metadata:
+      namespace: meng-org-quo
+      labels:
+    images:
+      node: quorumengineering/quorum:21.4.2
+      alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+      tessera: quorumengineering/tessera:21.4.0
+      busybox: busybox
+      mysql: mysql/mysql-server:5.7
+    node:
+      name: meng-org-v1
+      status: default
+      consensus: ibft
+      subject: O=meng-org-v1,OU=meng-org-v1,L=42.36/-71.06/Boston,C=US
+      mountPath: /etc/quorum/qdata
+      imagePullSecret: regcred
+      keystore: keystore_1
+      
+      servicetype: ClusterIP
+      lock: false
+      ports:
+        rpc: 8546
+        raft: 50401
+        tm: 443
+        quorum: 21000
+        db: 3306
+        cakeshop: 8080
+      dbname: demodb
+      mysqluser: demouser
+    vault:
+      address: http://101.36.106.59:8200
+      secretprefix: secretsv2/data/meng-org-quo/crypto/meng-org-v1
+      serviceaccountname: vault-auth
+      keyname: quorum
+      tm_keyname: transaction
+      role: vault-role
+      authpath: quorummeng-org
+    tessera:
+      dburl: "jdbc:mysql://meng-org-v1-tessera:3306/demodb"
+      dbusername: demouser
+      url: "https://meng-org-v1.dydx-org.blockchain.liubaninc.cn:443"
+      clienturl: "http://meng-org-v1-tessera:8888" #TODO: Enable tls strict for q2t
+      othernodes:
+        - url: https://meng-org-v0.dydx-org.blockchain.liubaninc.cn
+        - url: https://meng-org-v1.dydx-org.blockchain.liubaninc.cn
+        - url: https://meng-org-v2.dydx-org.blockchain.liubaninc.cn
+        - url: https://meng-org-m0.dydx-org.blockchain.liubaninc.cn
+      tls: "STRICT"
+      trust: "TOFU"
+    genesis: ewogICJjb25maWciOiB7CiAgICAiY2hhaW5JZCI6IDEwLAogICAgImhvbWVzdGVhZEJsb2NrIjogMCwKICAgICJlaXAxNTBCbG9jayI6IDAsCiAgICAiZWlwMTUwSGFzaCI6ICIweDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLAogICAgImVpcDE1NUJsb2NrIjogMCwKICAgICJlaXAxNThCbG9jayI6IDAsCiAgICAiYnl6YW50aXVtQmxvY2siOiAwLAogICAgImNvbnN0YW50aW5vcGxlQmxvY2siOiAwLAogICAgInBldGVyc2J1cmdCbG9jayI6IDAsCiAgICAiaXN0YW5idWxCbG9jayI6IDAsCiAgICAiaXN0YW5idWwiOiB7CiAgICAgICJlcG9jaCI6IDMwMDAwLAogICAgICAicG9saWN5IjogMCwKICAgICAgImNlaWwyTmJ5M0Jsb2NrIjogMAogICAgfSwKICAgICJ0eG5TaXplTGltaXQiOiAxMjgsCiAgICAicWlwNzE0QmxvY2siOiAwLAogICAgImlzTVBTIjogZmFsc2UsCiAgICAiaXNRdW9ydW0iOiB0cnVlLAogICAgIm1heENvZGVTaXplQ29uZmlnIjogWwogICAgICB7CiAgICAgICAgImJsb2NrIjogMCwKICAgICAgICAic2l6ZSI6IDEyOAogICAgICB9CiAgICBdCiAgfSwKICAibm9uY2UiOiAiMHgwIiwKICAidGltZXN0YW1wIjogIjB4NjFkZWUzZjMiLAogICJleHRyYURhdGEiOiAiMHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwZjg5YWY4NTQ5NDk4N2ZiMjFiN2NjMzhhNDlmYzUzZGZhZDc5MTRkZDI3NmZkZWU3YWY5NDdkM2ExOTg2ZDJlZjhhYTM0ZmQ0YTM5NjBhNzI1ZWI5MWU3NmZmNDc5NDNhZWFlZWJhOTRjNmQ5YWRmMDU4ZTJmMWJiYjkxYWRiYTY1NmM0Mjg5NGIwOTAzM2EwMDYwOGM5NmZhYTFjZWEwZjIxYWY2ZjlhOTRjNDY0OGZiODQxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMGMwIiwKICAiZ2FzTGltaXQiOiAiMHhlMDAwMDAwMCIsCiAgImRpZmZpY3VsdHkiOiAiMHgxIiwKICAibWl4SGFzaCI6ICIweDYzNzQ2OTYzNjE2YzIwNjI3OTdhNjE2ZTc0Njk2ZTY1MjA2NjYxNzU2Yzc0MjA3NDZmNmM2NTcyNjE2ZTYzNjUiLAogICJjb2luYmFzZSI6ICIweDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLAogICJhbGxvYyI6IHsKICAgICIzYWVhZWViYTk0YzZkOWFkZjA1OGUyZjFiYmI5MWFkYmE2NTZjNDI4IjogewogICAgICAiYmFsYW5jZSI6ICIweDQ0NmMzYjE1Zjk5MjY2ODdkMmM0MDUzNGZkYjU2NDAwMDAwMDAwMDAwMCIKICAgIH0sCiAgICAiN2QzYTE5ODZkMmVmOGFhMzRmZDRhMzk2MGE3MjVlYjkxZTc2ZmY0NyI6IHsKICAgICAgImJhbGFuY2UiOiAiMHg0NDZjM2IxNWY5OTI2Njg3ZDJjNDA1MzRmZGI1NjQwMDAwMDAwMDAwMDAiCiAgICB9LAogICAgIjk4N2ZiMjFiN2NjMzhhNDlmYzUzZGZhZDc5MTRkZDI3NmZkZWU3YWYiOiB7CiAgICAgICJiYWxhbmNlIjogIjB4NDQ2YzNiMTVmOTkyNjY4N2QyYzQwNTM0ZmRiNTY0MDAwMDAwMDAwMDAwIgogICAgfSwKICAgICJiMDkwMzNhMDA2MDhjOTZmYWExY2VhMGYyMWFmNmY5YTk0YzQ2NDhmIjogewogICAgICAiYmFsYW5jZSI6ICIweDQ0NmMzYjE1Zjk5MjY2ODdkMmM0MDUzNGZkYjU2NDAwMDAwMDAwMDAwMCIKICAgIH0KICB9LAogICJudW1iZXIiOiAiMHgwIiwKICAiZ2FzVXNlZCI6ICIweDAiLAogICJwYXJlbnRIYXNoIjogIjB4MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIKfQ==
+    staticnodes: 
+      [
+    "enode://e176f63a15258fb74d9799e984d34677e13950cbc62bc3463bb3e588340deed2f82a1345ee7d7cb6924605b01c72f125fdbb72d7a42ac6a32a8a10aa4643994d@meng-org-v0.dydx-org.blockchain.liubaninc.cn:10?discport=0",
+    "enode://c006f7b3fb782a0ded75603f51ad2d106bb434a57d727ca43a7abfc313f8ae50ac5c2d2bcf1a95cb67545e52fb0e56050d55c738d84f02af5201827829a3a0df@meng-org-v1.dydx-org.blockchain.liubaninc.cn:20?discport=0",
+    "enode://d3e3795c4ca901e42abc20deb12cb5cfd9fcbf0cf476ae772977a99f019991a72ee00a79f30339bf44e16e48e089b95178288ad15b3d19dfd09a3e029c2806c6@meng-org-v2.dydx-org.blockchain.liubaninc.cn:30?discport=0",
+    "enode://56a286cc0210078ce2e7218bb3cd96ec589c3c4404cbdf367c9ca64817e32fc2a4b2d90533b56e6f2d94dec3a94b0e5ebd0f6e6eac71f7f9c11c1e2ad2439b1d@meng-org-m0.dydx-org.blockchain.liubaninc.cn:0?discport=0"
+]
+    proxy:
+      provider: "ambassador"
+      external_url: meng-org-v1.dydx-org.blockchain.liubaninc.cn
+      portTM: 443
+      rpcport: 21
+      quorumport: 20
+      cakeshopport: 24
+    storage:
+      storageclassname: awsstorageclass
+      storagesize: 1Gi
+      dbstorage: 1Gi
