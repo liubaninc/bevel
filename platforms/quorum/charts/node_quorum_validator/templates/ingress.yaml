@@ -16,7 +16,7 @@ metadata:
   {{- end }}
 spec:
   rules:
-  - host: {{ .Values.node.name }}rpc.{{ .Values.proxy.external_url }}
+  - host: rpc.{{ .Values.proxy.external_url }}
     http:
       paths:
       - path: /
@@ -26,7 +26,7 @@ spec:
             name: {{ .Values.node.name }}
             port:
               number: {{ .Values.node.ports.rpc }}
-  - host: {{ .Values.node.name }}tcp.{{ .Values.proxy.external_url }}
+  - host: tcp.{{ .Values.proxy.external_url }}
     http:
       paths:
       - path: /
@@ -37,7 +37,7 @@ spec:
             port:
               number: {{ .Values.node.ports.quorum }}
   {{- if eq $.Values.node.consensus "raft" }}
-  - host: {{ .Values.node.name }}raft.{{ .Values.proxy.external_url }}
+  - host: raft.{{ .Values.proxy.external_url }}
     http:
       paths:
       - path: /
@@ -48,7 +48,7 @@ spec:
             port:
               number: {{ .Values.node.ports.raft }}
   {{- end }}
-  - host: {{ .Values.node.name }}cakeshop.{{ .Values.proxy.external_url }}
+  - host: cakeshop.{{ .Values.proxy.external_url }}
     http:
       paths:
           - path: /
