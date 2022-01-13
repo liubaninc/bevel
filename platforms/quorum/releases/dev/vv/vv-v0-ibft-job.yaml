@@ -1,0 +1,31 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: vv-v0-ibft-job
+  namespace: vv-quo
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: vv-v0-ibft-job
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local10
+    path: platforms/quorum/charts/crypto_ibft
+  values:
+    peer:
+      name: vv-v0
+      gethPassphrase: 12345
+    metadata:
+      name: vv-v0-ibft-job
+      namespace: vv-quo
+    image:
+      initContainerName: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+      node: quorumengineering/quorum:21.4.2
+      pullPolicy: Always
+    acceptLicense: YES
+    vault:
+      address: http://101.36.106.59:8200
+      role: vault-role
+      authpath: quorumvv
+      serviceaccountname: vault-auth
+      certsecretprefix: secretsv2/data/vv-quo
