@@ -9,7 +9,7 @@ spec:
   releaseName: ccc-vaultkubenertes-job
   chart:
     git: https://github.com/liubaninc/bevel.git
-    ref: local9
+    ref: local10
     path: platforms/hyperledger-fabric/charts/vault_kubernetes
   values:
     metadata:
