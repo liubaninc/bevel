@@ -50,7 +50,7 @@ spec:
       labels:
         run: haproxy-ingress
     spec:
-      hostNetwork: true
+      hostNetwork: false
       serviceAccountName: ingress-controller
       containers:
       - name: haproxy-ingress
