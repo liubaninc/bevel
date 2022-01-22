@@ -164,7 +164,7 @@ spec:
         - |-
           #!/usr/bin/env sh
           set -ex
-          if [[ -d /custom-config/ ]] && [[ -f /custom-config/fabric-ca-server-config.yaml ]]; then
+          if [ -d /custom-config/ ] && [ -f /custom-config/fabric-ca-server-config.yaml ]; then
             cp /custom-config/fabric-ca-server-config.yaml $FABRIC_CA_HOME/fabric-ca-server-config.yaml
             fabric-ca-server start --config $FABRIC_CA_HOME/fabric-ca-server-config.yaml -d
           else
