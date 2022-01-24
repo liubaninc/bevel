@@ -59,7 +59,7 @@ spec:
       component_country: UK
       component_state: London
       component_location: London
-      ca_url: ca.ccc-net.cccambassador.blockchain.liubaninc.cn
+      ca_url: ca.ccc-net.cccambassador.blockchain.liubaninc.cn:8443
 
     orderers:
       name: orderer0-orderer1-orderer2-orderer3-
