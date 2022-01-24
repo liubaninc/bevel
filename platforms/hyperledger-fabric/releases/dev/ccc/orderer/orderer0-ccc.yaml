@@ -1,0 +1,66 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: ccc-orderer0
+  namespace: ccc-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: ccc-orderer0
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local10
+    path: platforms/hyperledger-fabric/charts/orderernode
+  values:
+    metadata:
+      namespace: ccc-net
+      images:
+        orderer: hyperledger/fabric-orderer:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+      deployment:
+    orderer:
+      name: orderer0
+      loglevel: info
+      localmspid: cccMSP
+      tlsstatus: true
+      keepaliveserverinterval: 10s
+    
+    consensus:
+      name: kafka
+
+    storage:
+      storageclassname: cccsc
+      storagesize: 512Mi  
+
+    service:
+      servicetype: ClusterIP
+      ports:
+        grpc:
+          clusteripport: 7050
+
+    vault:
+      address: http://101.36.106.59:8200
+      role: vault-role
+      authpath: devccc-net-auth
+      secretprefix: secretsv2/data/crypto/ordererOrganizations/ccc-net/orderers/orderer0.ccc-net
+      imagesecretname: regcred
+      serviceaccountname: vault-auth
+    kafka:
+      readinesscheckinterval: 10
+      readinessthreshold: 10
+      brokers:
+      - kafka-0.broker.ccc-net.svc.cluster.local:9092
+      - kafka-1.broker.ccc-net.svc.cluster.local:9092
+      - kafka-2.broker.ccc-net.svc.cluster.local:9092
+      - kafka-3.broker.ccc-net.svc.cluster.local:9092
+
+    proxy:
+      provider: haproxy
+      external_url_suffix: cccambassador.blockchain.liubaninc.cn
+
+    genesis: |-
+      
