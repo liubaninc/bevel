@@ -30,4 +30,4 @@ spec:
       imagesecretname: regcred
       
     ca:
-      subject: /C=GB/ST=London/L=London/O=Orderer/CN=ca.ccc-net.cccambassador.blockchaincloudpoc.com%!(EXTRA string=blockchain.liubaninc.cn)
+      subject: /C=GB/ST=London/L=London/O=Orderer/CN=ca.ccc-net.cccambassador.blockchain.liubaninc.cn
