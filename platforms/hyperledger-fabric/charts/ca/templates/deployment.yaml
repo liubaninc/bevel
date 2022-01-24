@@ -167,6 +167,9 @@ spec:
           if [ -d /custom-config/ ] && [ -f /custom-config/fabric-ca-server-config.yaml ]; then
             cp /custom-config/fabric-ca-server-config.yaml $FABRIC_CA_HOME/fabric-ca-server-config.yaml
             ls -lh /etc/hyperledger/fabric-ca-server-config
+            cat /etc/hyperledger/fabric-ca-server-config/user_cred
+            echo "chaogaofeng"
+            cat /etc/hyperledger/fabric-ca-server-config/server.crt
             fabric-ca-server start --config $FABRIC_CA_HOME/fabric-ca-server-config.yaml -d
           else
             sleep 1 && fabric-ca-server start -b {{ $.Values.server.admin }}:`cat /etc/hyperledger/fabric-ca-server-config/user_cred` -d
