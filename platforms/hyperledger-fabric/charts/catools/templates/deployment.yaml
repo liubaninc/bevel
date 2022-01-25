@@ -148,6 +148,7 @@ spec:
           args:
             - |-
               #!/usr/bin/env sh
+              set -ex
               validateVaultResponse () {
                 if echo ${2} | grep "errors"; then
                   echo "ERROR: unable to retrieve ${1}: ${2}"
@@ -359,7 +360,7 @@ spec:
           command: ["sh", "-c"]
           args:
             - |-
-            
+              set -ex 
               if [ "$COMPONENT_TYPE" = "orderer" ]; then
 
                 if [ -e  ${MOUNT_PATH}/absent_msp.txt ]; then
@@ -574,6 +575,7 @@ spec:
           command: ["sh", "-c"]
           args:
             - |-
+              set -ex
               apk update && apk add jq curl bash;
               
               while ! [ -f ${MOUNT_PATH}/flag_finish.txt ]
