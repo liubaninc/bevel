@@ -1,0 +1,144 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: ccc-orderer2
+  namespace: ccc-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: ccc-orderer2
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local10
+    path: platforms/hyperledger-fabric/charts/orderernode
+  values:
+    metadata:
+      namespace: ccc-net
+      images:
+        orderer: hyperledger/fabric-orderer:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+      deployment:
+    orderer:
+      name: orderer2
+      loglevel: info
+      localmspid: cccMSP
+      tlsstatus: true
+      keepaliveserverinterval: 10s
+    
+    consensus:
+      name: kafka
+
+    storage:
+      storageclassname: cccsc
+      storagesize: 512Mi  
+
+    service:
+      servicetype: ClusterIP
+      ports:
+        grpc:
+          clusteripport: 7050
+
+    vault:
+      address: http://101.36.106.59:8200
+      role: vault-role
+      authpath: devccc-net-auth
+      secretprefix: secretsv2/data/crypto/ordererOrganizations/ccc-net/orderers/orderer2.ccc-net
+      imagesecretname: regcred
+      serviceaccountname: vault-auth
+    kafka:
+      readinesscheckinterval: 10
+      readinessthreshold: 10
+      brokers:
+      - kafka-0.broker.ccc-net.svc.cluster.local:9092
+      - kafka-1.broker.ccc-net.svc.cluster.local:9092
+      - kafka-2.broker.ccc-net.svc.cluster.local:9092
+      - kafka-3.broker.ccc-net.svc.cluster.local:9092
+
+    proxy:
+      provider: haproxy
+      external_url_suffix: cccambassador.blockchain.liubaninc.cn
+
+    genesis: |-
+      CiIaIEaP3o7EJ8GWeFB+ND2myuedqd7jbNNVXvNhU/unNQ8JErciCrQiCrEiCngKWggBEAEaBgiS
+      ksCPBiIKc3lzY2hhbm5lbCpAZTA1NTYwZDVmOWY3OWMwY2I2NWRkODQ4MTUxMTk1YjYzMjZkMzQw
+      N2Y1MjAzNDM3MjIxZTFlMzVjMjgyMzI0YxIaEhi1qH2+cJ7qNXwK27PQVWlUnRxX4VfOTWIStCEK
+      sSESriES6RsKB09yZGVyZXIS3RsSsBcKBmNjY01TUBKlFxrRFQoDTVNQEskVEr4VErsVCgZjY2NN
+      U1AStgYtLS0tLUJFR0lOIENFUlRJRklDQVRFLS0tLS0KTUlJQ016Q0NBZHFnQXdJQkFnSVVjWmxw
+      TDhhSEtUY09oc1pyZ0tuNWdPQUp2Um93Q2dZSUtvWkl6ajBFQXdJdwplREVMTUFrR0ExVUVCaE1D
+      UjBJeER6QU5CZ05WQkFnTUJreHZibVJ2YmpFUE1BMEdBMVVFQnd3R1RHOXVaRzl1Ck1Rd3dDZ1lE
+      VlFRS0RBTmpZMk14T1RBM0JnTlZCQU1NTUdOaExtTmpZeTF1WlhRdVkyTmpZVzFpWVhOellXUnYK
+      Y2k1aWJHOWphMk5vWVdsdUxteHBkV0poYm1sdVl5NWpiakFlRncweU1qQXhNalV4TkRJd01UQmFG
+      dzB5TkRFeApNVFF4TkRJd01UQmFNSGd4Q3pBSkJnTlZCQVlUQWtkQ01ROHdEUVlEVlFRSURBWk1i
+      MjVrYjI0eER6QU5CZ05WCkJBY01Ca3h2Ym1SdmJqRU1NQW9HQTFVRUNnd0RZMk5qTVRrd053WURW
+      UVFERERCallTNWpZMk10Ym1WMExtTmoKWTJGdFltRnpjMkZrYjNJdVlteHZZMnRqYUdGcGJpNXNh
+      WFZpWVc1cGJtTXVZMjR3V1RBVEJnY3Foa2pPUFFJQgpCZ2dxaGtqT1BRTUJCd05DQUFTSXlMRFBj
+      RTJCODZMM1NBZnIrdU0xaHVEanVhT1JwNDhKeEEzV1BaTytPcDRsCmc4SlRBUGI4UzY1WWY3MFpI
+      UWNFVnBNVUlYOU1iT1h1MW9xWFRJL09vMEl3UURBUEJnTlZIUk1CQWY4RUJUQUQKQVFIL01BNEdB
+      MVVkRHdFQi93UUVBd0lCcGpBZEJnTlZIUTRFRmdRVUtXRGtPREtjMWR6QU5YY1NoMis2ZmswMQo1
+      OTh3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnYmRSWnpuajI2VTZOUmxGckRGejZQNS82eURxdDlO
+      OUh3dm9xCmFINHNxZWdDSURGRDF5a2hBRE13OTh0aG9EVS8wanlXVGQzcXRUR0hWZWkraUF1RnJz
+      UFIKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQoirggtLS0tLUJFR0lOIENFUlRJRklDQVRFLS0t
+      LS0KTUlJQzZqQ0NBcEdnQXdJQkFnSVVNWGJxUlZpRTN4Q3l0VEdEeTJBaDI2V0Z3VE13Q2dZSUtv
+      Wkl6ajBFQXdJdwplREVMTUFrR0ExVUVCaE1DUjBJeER6QU5CZ05WQkFnTUJreHZibVJ2YmpFUE1B
+      MEdBMVVFQnd3R1RHOXVaRzl1Ck1Rd3dDZ1lEVlFRS0RBTmpZMk14T1RBM0JnTlZCQU1NTUdOaExt
+      TmpZeTF1WlhRdVkyTmpZVzFpWVhOellXUnYKY2k1aWJHOWphMk5vWVdsdUxteHBkV0poYm1sdVl5
+      NWpiakFlRncweU1qQXhNalV4TkRJek1EQmFGdzB5TXpBeApNalV4TkRJNE1EQmFNR1F4Q3pBSkJn
+      TlZCQVlUQWtkQ01Sc3dHUVlEVlFRSEV4STFNUzQxTUM4dE1DNHhNeTlNCmIyNWtiMjR4RURBT0Jn
+      TlZCQW9UQjA5eVpHVnlaWEl4RGpBTUJnTlZCQXNUQldGa2JXbHVNUll3RkFZRFZRUUQKREExQlpH
+      MXBia0JqWTJNdGJtVjBNRmt3RXdZSEtvWkl6ajBDQVFZSUtvWkl6ajBEQVFjRFFnQUVsZlpsQWlH
+      OQo0WVpkYW9iMEZSd0xRS2h2blp6VXd5elpINWNsVWJ5ZS9YamVSM2dYN2hwSDdKQ09CUytKV0RY
+      aGxSWDEvd3hyCkdXQVBXRVpBb3JYV2hhT0NBUXN3Z2dFSE1BNEdBMVVkRHdFQi93UUVBd0lIZ0RB
+      TUJnTlZIUk1CQWY4RUFqQUEKTUIwR0ExVWREZ1FXQkJRRzNRVE1DcWErMmZUWS9keUtMUEhidWU0
+      NS9UQWZCZ05WSFNNRUdEQVdnQlFwWU9RNApNcHpWM01BMWR4S0hiN3ArVFRYbjN6QWpCZ05WSFJF
+      RUhEQWFnaGhqWVMxMGIyOXNjeTA1T1dZM056Vm1OMkl0CmRIUnRiblF3Z1lFR0NDb0RCQVVHQndn
+      QkJIVjdJbUYwZEhKeklqcDdJbUZpWVdNdWFXNXBkQ0k2SW5SeWRXVWkKTENKaFpHMXBiaUk2SW5S
+      eWRXVWlMQ0pvWmk1QlptWnBiR2xoZEdsdmJpSTZJaUlzSW1obUxrVnVjbTlzYkcxbApiblJKUkNJ
+      NklrRmtiV2x1UUdOall5MXVaWFFpTENKb1ppNVVlWEJsSWpvaVlXUnRhVzRpZlgwd0NnWUlLb1pJ
+      CnpqMEVBd0lEUndBd1JBSWdDK3Vhd2FhQTdtcnQxTmR1ZGdhc1k0eGtKNFM5dEVCV3NHeDRUTloz
+      ZmxBQ0lBc28KaDlSd3J0czluQnpGa0k4UW53aStmZEkrMEtqUHNJQU5jaVhmTW5iMgotLS0tLUVO
+      RCBDRVJUSUZJQ0FURS0tLS0tCkIOCgRTSEEyEgZTSEEyNTZKtgYtLS0tLUJFR0lOIENFUlRJRklD
+      QVRFLS0tLS0KTUlJQ016Q0NBZHFnQXdJQkFnSVVjWmxwTDhhSEtUY09oc1pyZ0tuNWdPQUp2Um93
+      Q2dZSUtvWkl6ajBFQXdJdwplREVMTUFrR0ExVUVCaE1DUjBJeER6QU5CZ05WQkFnTUJreHZibVJ2
+      YmpFUE1BMEdBMVVFQnd3R1RHOXVaRzl1Ck1Rd3dDZ1lEVlFRS0RBTmpZMk14T1RBM0JnTlZCQU1N
+      TUdOaExtTmpZeTF1WlhRdVkyTmpZVzFpWVhOellXUnYKY2k1aWJHOWphMk5vWVdsdUxteHBkV0po
+      Ym1sdVl5NWpiakFlRncweU1qQXhNalV4TkRJd01UQmFGdzB5TkRFeApNVFF4TkRJd01UQmFNSGd4
+      Q3pBSkJnTlZCQVlUQWtkQ01ROHdEUVlEVlFRSURBWk1iMjVrYjI0eER6QU5CZ05WCkJBY01Ca3h2
+      Ym1SdmJqRU1NQW9HQTFVRUNnd0RZMk5qTVRrd053WURWUVFERERCallTNWpZMk10Ym1WMExtTmoK
+      WTJGdFltRnpjMkZrYjNJdVlteHZZMnRqYUdGcGJpNXNhWFZpWVc1cGJtTXVZMjR3V1RBVEJnY3Fo
+      a2pPUFFJQgpCZ2dxaGtqT1BRTUJCd05DQUFTSXlMRFBjRTJCODZMM1NBZnIrdU0xaHVEanVhT1Jw
+      NDhKeEEzV1BaTytPcDRsCmc4SlRBUGI4UzY1WWY3MFpIUWNFVnBNVUlYOU1iT1h1MW9xWFRJL09v
+      MEl3UURBUEJnTlZIUk1CQWY4RUJUQUQKQVFIL01BNEdBMVVkRHdFQi93UUVBd0lCcGpBZEJnTlZI
+      UTRFRmdRVUtXRGtPREtjMWR6QU5YY1NoMis2ZmswMQo1OTh3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdS
+      QUlnYmRSWnpuajI2VTZOUmxGckRGejZQNS82eURxdDlOOUh3dm9xCmFINHNxZWdDSURGRDF5a2hB
+      RE13OTh0aG9EVS8wanlXVGQzcXRUR0hWZWkraUF1RnJzUFIKLS0tLS1FTkQgQ0VSVElGSUNBVEUt
+      LS0tLQoaBkFkbWlucyIwCgZBZG1pbnMSJhIcCAESGBIIEgYIARICCAAaDBIKCgZjY2NNU1AQARoG
+      QWRtaW5zIjMKC0VuZG9yc2VtZW50EiQSGggBEhYSCBIGCAESAggAGgoSCAoGY2NjTVNQGgZBZG1p
+      bnMiLwoHUmVhZGVycxIkEhoIARIWEggSBggBEgIIABoKEggKBmNjY01TUBoGQWRtaW5zIi8KB1dy
+      aXRlcnMSJBIaCAESFhIIEgYIARICCAAaChIICgZjY2NNU1AaBkFkbWlucyoGQWRtaW5zGtgBCgxL
+      YWZrYUJyb2tlcnMSxwESvAEKLWthZmthLTAuYnJva2VyLmNjYy1uZXQuc3ZjLmNsdXN0ZXIubG9j
+      YWw6OTA5Mgota2Fma2EtMS5icm9rZXIuY2NjLW5ldC5zdmMuY2x1c3Rlci5sb2NhbDo5MDkyCi1r
+      YWZrYS0yLmJyb2tlci5jY2MtbmV0LnN2Yy5jbHVzdGVyLmxvY2FsOjkwOTIKLWthZmthLTMuYnJv
+      a2VyLmNjYy1uZXQuc3ZjLmNsdXN0ZXIubG9jYWw6OTA5MhoGQWRtaW5zGiIKDUNvbnNlbnN1c1R5
+      cGUSERIHCgVrYWZrYRoGQWRtaW5zGiIKCUJhdGNoU2l6ZRIVEgsIChCAgIAxGICAQBoGQWRtaW5z
+      Gh4KDEJhdGNoVGltZW91dBIOEgQKAjJzGgZBZG1pbnMaHwoTQ2hhbm5lbFJlc3RyaWN0aW9ucxII
+      GgZBZG1pbnMaJAoMQ2FwYWJpbGl0aWVzEhQSCgoICgRWMl8wEgAaBkFkbWlucyIqCg9CbG9ja1Zh
+      bGlkYXRpb24SFxINCAMSCQoHV3JpdGVycxoGQWRtaW5zIiIKB1JlYWRlcnMSFxINCAMSCQoHUmVh
+      ZGVycxoGQWRtaW5zIiIKB1dyaXRlcnMSFxINCAMSCQoHV3JpdGVycxoGQWRtaW5zIiIKBkFkbWlu
+      cxIYEg4IAxIKCgZBZG1pbnMQAhoGQWRtaW5zKgZBZG1pbnMSxgEKC0NvbnNvcnRpdW1zErYBEmwK
+      DWNjY0NvbnNvcnRpdW0SWxpAChVDaGFubmVsQ3JlYXRpb25Qb2xpY3kSJxIMCAMSCAoGQWRtaW5z
+      GhcvQ2hhbm5lbC9PcmRlcmVyL0FkbWlucyoXL0NoYW5uZWwvT3JkZXJlci9BZG1pbnMiLQoGQWRt
+      aW5zEiMSCAgBEgQSAhIAGhcvQ2hhbm5lbC9PcmRlcmVyL0FkbWlucyoXL0NoYW5uZWwvT3JkZXJl
+      ci9BZG1pbnMahQIKEE9yZGVyZXJBZGRyZXNzZXMS8AES1AEKM29yZGVyZXIwLmNjY2FtYmFzc2Fk
+      b3IuYmxvY2tjaGFpbi5saXViYW5pbmMuY246ODQ0Mwozb3JkZXJlcjEuY2NjYW1iYXNzYWRvci5i
+      bG9ja2NoYWluLmxpdWJhbmluYy5jbjo4NDQzCjNvcmRlcmVyMi5jY2NhbWJhc3NhZG9yLmJsb2Nr
+      Y2hhaW4ubGl1YmFuaW5jLmNuOjg0NDMKM29yZGVyZXIzLmNjY2FtYmFzc2Fkb3IuYmxvY2tjaGFp
+      bi5saXViYW5pbmMuY246ODQ0MxoXL0NoYW5uZWwvT3JkZXJlci9BZG1pbnMaJAoMQ2FwYWJpbGl0
+      aWVzEhQSCgoICgRWMl8wEgAaBkFkbWlucxomChBIYXNoaW5nQWxnb3JpdGhtEhISCAoGU0hBMjU2
+      GgZBZG1pbnMaLQoZQmxvY2tEYXRhSGFzaGluZ1N0cnVjdHVyZRIQEgYI/////w8aBkFkbWlucyIi
+      CgdSZWFkZXJzEhcSDQgDEgkKB1JlYWRlcnMaBkFkbWlucyIiCgdXcml0ZXJzEhcSDQgDEgkKB1dy
+      aXRlcnMaBkFkbWlucyIiCgZBZG1pbnMSGBIOCAMSCgoGQWRtaW5zEAIaBkFkbWlucyoGQWRtaW5z
+      Gg4KBAoCCgAKAAoACgAKAA==
