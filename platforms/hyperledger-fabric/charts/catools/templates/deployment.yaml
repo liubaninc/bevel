@@ -360,7 +360,7 @@ spec:
           command: ["sh", "-c"]
           args:
             - |-
-              set -ex 
+              set -x 
               if [ "$COMPONENT_TYPE" = "orderer" ]; then
 
                 if [ -e  ${MOUNT_PATH}/absent_msp.txt ]; then
