@@ -500,9 +500,10 @@
           "properties": {
             "ca":{ "$ref":"#/definitions/fabric_service_ca"},
             "consensus":{ "$ref":"#/definitions/fabric_service_consensus"},
-            "orderers": { "type":"array","items":{ "$ref":"#/definitions/fabric_service_orderer"}}
+            "orderers": { "type":"array","items":{ "$ref":"#/definitions/fabric_service_orderer"}},
+	    "peers": { "type":"array","items":{ "$ref":"#/definitions/fabric_service_peer"}}
             },
-          "required": [ "ca","consensus","orderers"],
+          "required": [ "ca","consensus","orderers", "peers"],
           "additionalProperties": false
         },
         "fabric_peer_services":{
