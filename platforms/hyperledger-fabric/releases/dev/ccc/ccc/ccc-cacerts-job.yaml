@@ -1,0 +1,33 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: ccc-cacerts-job
+  namespace: ccc-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: ccc-cacerts-job
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local10
+    path: platforms/hyperledger-fabric/charts/generate_cacerts
+  values:
+    metadata:
+      name: ccc
+      component_name: ccc-net
+      namespace: ccc-net    
+      images:
+        fabrictools: hyperledger/fabric-tools:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devccc-net-auth
+      secretcryptoprefix: secretsv2/data/crypto/ordererOrganizations/ccc-net/ca
+      secretcredentialsprefix: secretsv2/data/credentials/ccc-net/ca/ccc
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+      
+    ca:
+      subject: /C=GB/ST=London/L=London/O=Orderer/CN=ca.ccc-net.cccambassador.blockchain.liubaninc.cn
