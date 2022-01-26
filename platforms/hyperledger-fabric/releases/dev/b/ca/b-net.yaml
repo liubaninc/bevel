@@ -1,0 +1,52 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: b-net-ca
+  namespace: b-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: b-net-ca
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/ca    
+  values:
+    metadata:
+      namespace: b-net
+      images:
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+        ca: hyperledger/fabric-ca:1.4.8
+    deployment:
+      annotations:
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+ 
+    server:
+      name: ca
+      tlsstatus: true
+      admin: b-admin 
+  
+    storage:
+      storageclassname: bsc
+      storagesize: 512Mi
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devb-net-auth
+      secretcert: secretsv2/data/crypto/peerOrganizations/b-net/ca?ca.b-net-cert.pem
+      secretkey: secretsv2/data/crypto/peerOrganizations/b-net/ca?b-net-CA.key
+      secretadminpass: secretsv2/data/credentials/b-net/ca/b?user
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+    service:
+      servicetype: ClusterIP
+      ports:
+        tcp:
+          port: 7054
+    proxy:
+      provider: haproxy
+      type: peer
+      external_url_suffix: bambassador.blockchain.liubaninc.cn
