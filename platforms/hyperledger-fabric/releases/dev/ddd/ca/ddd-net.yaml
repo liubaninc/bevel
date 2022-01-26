@@ -1,0 +1,52 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: ddd-net-ca
+  namespace: ddd-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: ddd-net-ca
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local10
+    path: platforms/hyperledger-fabric/charts/ca    
+  values:
+    metadata:
+      namespace: ddd-net
+      images:
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+        ca: hyperledger/fabric-ca:1.4.8
+    deployment:
+      annotations:
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+ 
+    server:
+      name: ca
+      tlsstatus: true
+      admin: ddd-admin 
+  
+    storage:
+      storageclassname: dddsc
+      storagesize: 512Mi
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devddd-net-auth
+      secretcert: secretsv2/data/crypto/peerOrganizations/ddd-net/ca?ca.ddd-net-cert.pem
+      secretkey: secretsv2/data/crypto/peerOrganizations/ddd-net/ca?ddd-net-CA.key
+      secretadminpass: secretsv2/data/credentials/ddd-net/ca/ddd?user
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+    service:
+      servicetype: ClusterIP
+      ports:
+        tcp:
+          port: 7054
+    proxy:
+      provider: haproxy
+      type: peer
+      external_url_suffix: dddambassador.blockchain.liubaninc.cn
