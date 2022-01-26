@@ -1,0 +1,33 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: b-cacerts-job
+  namespace: b-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: b-cacerts-job
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/generate_cacerts
+  values:
+    metadata:
+      name: b
+      component_name: b-net
+      namespace: b-net    
+      images:
+        fabrictools: hyperledger/fabric-tools:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devb-net-auth
+      secretcryptoprefix: secretsv2/data/crypto/peerOrganizations/b-net/ca
+      secretcredentialsprefix: secretsv2/data/credentials/b-net/ca/b
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+      
+    ca:
+      subject: /C=GB/ST=London/L=London/O=b/CN=ca.b-net.bambassador.blockchain.liubaninc.cn
