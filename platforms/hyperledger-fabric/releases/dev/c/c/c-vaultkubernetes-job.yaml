@@ -1,0 +1,33 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: c-vaultkubenertes-job
+  namespace: c-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: c-vaultkubenertes-job
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/vault_kubernetes
+  values:
+    metadata:
+      name: c
+      component_type: peer
+      namespace: c-net    
+      images:
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+
+    vault:
+      reviewer_service: vault-reviewer
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devc-net-auth
+      policy: vault-crypto-peer-c-net-ro
+      secret_path: secretsv2
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+    
+    k8s:
+      kubernetes_url: https://152.32.210.47:6443
