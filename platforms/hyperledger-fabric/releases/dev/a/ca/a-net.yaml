@@ -1,0 +1,51 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: a-net-ca
+  namespace: a-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: a-net-ca
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/ca    
+  values:
+    deployment:
+      annotations:
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+    metadata:
+      namespace: a-net
+      images:
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+        ca: hyperledger/fabric-ca:1.4.8
+    server:
+      name: ca
+      tlsstatus: true
+      admin: a-admin
+        
+    storage:
+      storageclassname: asc
+      storagesize: 512Mi 
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: deva-net-auth
+      secretcert: secretsv2/data/crypto/ordererOrganizations/a-net/ca?ca.a-net-cert.pem
+      secretkey: secretsv2/data/crypto/ordererOrganizations/a-net/ca?a-net-CA.key
+      secretadminpass: secretsv2/data/credentials/a-net/ca/a?user
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+    service:
+      servicetype: ClusterIP
+      ports:
+        tcp:
+          port: 7054
+    proxy:
+      provider: haproxy
+      type: orderer
+      external_url_suffix: aambassador.blockchain.liubaninc.cn
