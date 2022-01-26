@@ -1,0 +1,68 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: c-peer0
+  namespace: c-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: c-peer0
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/peernode    
+  values:
+    metadata:
+      namespace: c-net
+      images:
+        couchdb: couchdb:3.1
+        peer: hyperledger/fabric-peer:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+      deployment:
+        
+    peer:
+      name: peer0
+      gossippeeraddress: peer0.c-net:7051
+      gossipexternalendpoint: peer0.c-net.cambassador.blockchain.liubaninc.cn:8443
+      localmspid: cMSP
+      loglevel: info
+      tlsstatus: true
+      builder: hyperledger/fabric-ccenv:2.2.2
+      couchdb:
+        username: c-user
+
+    storage:
+      peer:
+        storageclassname: csc
+        storagesize: 512Mi
+      couchdb:
+        storageclassname: csc
+        storagesize: 1Gi
+
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devc-net-auth
+      secretprefix: secretsv2/data/crypto/peerOrganizations/c-net/peers/peer0.c-net
+      secretambassador: secretsv2/data/crypto/peerOrganizations/c-net/ambassador
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+      secretcouchdbpass: secretsv2/data/credentials/c-net/couchdb/c?user
+
+    service:
+      servicetype: ClusterIP
+      ports:
+        grpc:
+          clusteripport: 7051
+        events:
+          clusteripport: 7053
+        couchdb:
+          clusteripport: 5984
+          
+    proxy:
+      provider: "haproxy"
+      external_url_suffix: cambassador.blockchain.liubaninc.cn
