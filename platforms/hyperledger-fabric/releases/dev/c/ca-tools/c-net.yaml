@@ -1,0 +1,65 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: c-net-ca-tools
+  namespace: c-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: c-net-ca-tools
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local10
+    path: platforms/hyperledger-fabric/charts/catools
+  values:
+    metadata:
+      namespace: c-net
+      name: ca-tools
+      component_type: orderer
+      org_name: c
+      proxy: haproxy
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+      deployment:
+    replicaCount: 1
+
+    image:
+      repository: hyperledger/fabric-ca-tools
+      tag: 1.2.1
+      pullPolicy: IfNotPresent
+      alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+      
+    storage:
+      storageclassname: csc
+      storagesize: 512Mi
+    
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devc-net-auth
+      secretmsp: secretsv2/data/crypto/ordererOrganizations/c-net/users/admin/msp
+      secrettls: secretsv2/data/crypto/ordererOrganizations/c-net/users/admin/tls
+      secretorderer: secretsv2/data/crypto/ordererOrganizations/c-net/orderers
+      secretpeer: secretsv2/data/crypto/ordererOrganizations/c-net/peers
+      secretpeerorderertls: secretsv2/data/crypto/ordererOrganizations/c-net/orderer/tls
+      secretambassador: secretsv2/data/crypto/ordererOrganizations/c-net/ambassador
+      secretcert: secretsv2/data/crypto/ordererOrganizations/c-net/ca?ca.c-net-cert.pem
+      secretkey: secretsv2/data/crypto/ordererOrganizations/c-net/ca?c-net-CA.key
+      secretcouchdb: secretsv2/data/credentials/c-net/couchdb/c
+      secretconfigfile: secretsv2/data/crypto/ordererOrganizations/c-net/msp/config
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+    
+    org_data:
+      external_url_suffix: cambassador.blockchain.liubaninc.cn
+      component_subject: O=Orderer,L=51.50/-0.13/London,C=GB
+      cert_subject: O=Orderer/L=51.50,-0.13,London/C=GB
+      component_country: UK
+      component_state: London
+      component_location: London
+      ca_url: ca.c-net.cambassador.blockchain.liubaninc.cn:8443
+
+    orderers:
+      name: orderer0-orderer1-
