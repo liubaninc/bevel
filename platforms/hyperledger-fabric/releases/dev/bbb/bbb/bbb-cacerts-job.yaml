@@ -1,0 +1,33 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: bbb-cacerts-job
+  namespace: bbb-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: bbb-cacerts-job
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/generate_cacerts
+  values:
+    metadata:
+      name: bbb
+      component_name: bbb-net
+      namespace: bbb-net    
+      images:
+        fabrictools: hyperledger/fabric-tools:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devbbb-net-auth
+      secretcryptoprefix: secretsv2/data/crypto/peerOrganizations/bbb-net/ca
+      secretcredentialsprefix: secretsv2/data/credentials/bbb-net/ca/bbb
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+      
+    ca:
+      subject: /C=CH/ST=Zurich/L=Zurich/O=bbb/CN=ca.bbb-net.bbbambassador.blockchain.liubaninc.cn
