@@ -167,6 +167,7 @@ spec:
         command: ["sh", "-c"]
         args:
         - |-
+          set -x
           chown -R couchdb:couchdb /opt/couchdb
           chmod -R 0770 /opt/couchdb/data
           chmod 664 /opt/couchdb/etc/*.ini
