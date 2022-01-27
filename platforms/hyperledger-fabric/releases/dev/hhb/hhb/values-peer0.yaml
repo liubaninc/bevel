@@ -1,0 +1,68 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: hhb-peer0
+  namespace: hhb-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: hhb-peer0
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/peernode    
+  values:
+    metadata:
+      namespace: hhb-net
+      images:
+        couchdb: couchdb:3.1
+        peer: hyperledger/fabric-peer:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+      deployment:
+        
+    peer:
+      name: peer0
+      gossippeeraddress: peer0.hhb-net:7051
+      gossipexternalendpoint: peer0.hhb-net.hhbambassador.blockchain.liubaninc.cn:8443
+      localmspid: hhbMSP
+      loglevel: info
+      tlsstatus: true
+      builder: hyperledger/fabric-ccenv:2.2.2
+      couchdb:
+        username: hhb-user
+
+    storage:
+      peer:
+        storageclassname: hhbsc
+        storagesize: 512Mi
+      couchdb:
+        storageclassname: hhbsc
+        storagesize: 1Gi
+
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devhhb-net-auth
+      secretprefix: secretsv2/data/crypto/peerOrganizations/hhb-net/peers/peer0.hhb-net
+      secretambassador: secretsv2/data/crypto/peerOrganizations/hhb-net/ambassador
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+      secretcouchdbpass: secretsv2/data/credentials/hhb-net/couchdb/hhb?user
+
+    service:
+      servicetype: ClusterIP
+      ports:
+        grpc:
+          clusteripport: 7051
+        events:
+          clusteripport: 7053
+        couchdb:
+          clusteripport: 5984
+          
+    proxy:
+      provider: "haproxy"
+      external_url_suffix: hhbambassador.blockchain.liubaninc.cn
