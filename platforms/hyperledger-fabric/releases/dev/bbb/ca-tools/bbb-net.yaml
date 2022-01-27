@@ -1,0 +1,77 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: bbb-net-ca-tools
+  namespace: bbb-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: bbb-net-ca-tools
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/catools
+  values:
+    metadata:
+      namespace: bbb-net
+      name: ca-tools
+      component_type: peer
+      org_name: bbb
+      proxy: haproxy
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+      deployment:
+    replicaCount: 1
+
+    image:
+      repository: hyperledger/fabric-ca-tools
+      tag: 1.2.1
+      pullPolicy: IfNotPresent
+      alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+      
+    storage:
+      storageclassname: bbbsc
+      storagesize: 512Mi
+    
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devbbb-net-auth
+      secretmsp: secretsv2/data/crypto/peerOrganizations/bbb-net/users/admin/msp
+      secrettls: secretsv2/data/crypto/peerOrganizations/bbb-net/users/admin/tls
+      secretorderer: secretsv2/data/crypto/peerOrganizations/bbb-net/orderers
+      secretpeer: secretsv2/data/crypto/peerOrganizations/bbb-net/peers
+      secretpeerorderertls: secretsv2/data/crypto/peerOrganizations/bbb-net/orderer/tls
+      secretambassador: secretsv2/data/crypto/peerOrganizations/bbb-net/ambassador
+      secretcert: secretsv2/data/crypto/peerOrganizations/bbb-net/ca?ca.bbb-net-cert.pem
+      secretkey: secretsv2/data/crypto/peerOrganizations/bbb-net/ca?bbb-net-CA.key
+      secretcouchdb: secretsv2/data/credentials/bbb-net/couchdb/bbb
+      secretconfigfile: secretsv2/data/crypto/peerOrganizations/bbb-net/msp/config
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+    
+    org_data:
+      external_url_suffix: bbbambassador.blockchain.liubaninc.cn
+      component_subject: O=bbb,OU=bbb,L=47.38/8.54/Zurich,C=CH
+      cert_subject: O=bbb/OU=bbb/L=47.38,8.54,Zurich/C=CH
+      component_country: CH
+      component_state: Zurich
+      component_location: Zurich
+      ca_url: ca.bbb-net.bbbambassador.blockchain.liubaninc.cn:8443
+
+    orderers:
+      name: orderer0-orderer1-
+    orderers_info:
+      - name: orderer0
+        path: "certs/orderer0-ca.crt"
+      - name: orderer1
+        path: "certs/orderer1-ca.crt"
+
+    peers:
+      name: peer0,-peer1,-      
+    peer_count: "2"
+
+    checks:
+      refresh_cert_value: False
