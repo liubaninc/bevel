@@ -1,0 +1,33 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: hha-cacerts-job
+  namespace: hha-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: hha-cacerts-job
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/generate_cacerts
+  values:
+    metadata:
+      name: hha
+      component_name: hha-net
+      namespace: hha-net    
+      images:
+        fabrictools: hyperledger/fabric-tools:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devhha-net-auth
+      secretcryptoprefix: secretsv2/data/crypto/ordererOrganizations/hha-net/ca
+      secretcredentialsprefix: secretsv2/data/credentials/hha-net/ca/hha
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+      
+    ca:
+      subject: /C=GB/ST=London/L=London/O=Orderer/CN=ca.hha-net.hhaambassador.blockchain.liubaninc.cn
