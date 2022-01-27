@@ -59,7 +59,7 @@ spec:
       component_country: CH
       component_state: Zurich
       component_location: Zurich
-      ca_url: ca.hhb-net.hhbambassador.blockchain.liubaninc.cn:8443
+      ca_url: ca.hhb-net.hhbambassador.blockchain.liubaninc.cn:7443
 
     orderers:
       name: orderer0-orderer1-
