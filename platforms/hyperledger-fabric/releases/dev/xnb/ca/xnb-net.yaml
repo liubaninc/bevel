@@ -1,0 +1,52 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: xnb-net-ca
+  namespace: xnb-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: xnb-net-ca
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/ca    
+  values:
+    metadata:
+      namespace: xnb-net
+      images:
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+        ca: hyperledger/fabric-ca:1.4.8
+    deployment:
+      annotations:
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+ 
+    server:
+      name: ca
+      tlsstatus: true
+      admin: xnb-admin 
+  
+    storage:
+      storageclassname: xnbsc
+      storagesize: 512Mi
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devxnb-net-auth
+      secretcert: secretsv2/data/crypto/peerOrganizations/xnb-net/ca?ca.xnb-net-cert.pem
+      secretkey: secretsv2/data/crypto/peerOrganizations/xnb-net/ca?xnb-net-CA.key
+      secretadminpass: secretsv2/data/credentials/xnb-net/ca/xnb?user
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+    service:
+      servicetype: ClusterIP
+      ports:
+        tcp:
+          port: 7054
+    proxy:
+      provider: haproxy
+      type: peer
+      external_url_suffix: xnbambassador.blockchain.liubaninc.cn
