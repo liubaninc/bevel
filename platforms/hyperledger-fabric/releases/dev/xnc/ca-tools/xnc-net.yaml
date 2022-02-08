@@ -1,0 +1,65 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: xnc-net-ca-tools
+  namespace: xnc-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: xnc-net-ca-tools
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/catools
+  values:
+    metadata:
+      namespace: xnc-net
+      name: ca-tools
+      component_type: orderer
+      org_name: xnc
+      proxy: haproxy
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+      deployment:
+    replicaCount: 1
+
+    image:
+      repository: hyperledger/fabric-ca-tools
+      tag: 1.2.1
+      pullPolicy: IfNotPresent
+      alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+      
+    storage:
+      storageclassname: xncsc
+      storagesize: 512Mi
+    
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devxnc-net-auth
+      secretmsp: secretsv2/data/crypto/ordererOrganizations/xnc-net/users/admin/msp
+      secrettls: secretsv2/data/crypto/ordererOrganizations/xnc-net/users/admin/tls
+      secretorderer: secretsv2/data/crypto/ordererOrganizations/xnc-net/orderers
+      secretpeer: secretsv2/data/crypto/ordererOrganizations/xnc-net/peers
+      secretpeerorderertls: secretsv2/data/crypto/ordererOrganizations/xnc-net/orderer/tls
+      secretambassador: secretsv2/data/crypto/ordererOrganizations/xnc-net/ambassador
+      secretcert: secretsv2/data/crypto/ordererOrganizations/xnc-net/ca?ca.xnc-net-cert.pem
+      secretkey: secretsv2/data/crypto/ordererOrganizations/xnc-net/ca?xnc-net-CA.key
+      secretcouchdb: secretsv2/data/credentials/xnc-net/couchdb/xnc
+      secretconfigfile: secretsv2/data/crypto/ordererOrganizations/xnc-net/msp/config
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+    
+    org_data:
+      external_url_suffix: xncambassador.blockchain.liubaninc.cn
+      component_subject: O=Orderer,L=51.50/-0.13/London,C=GB
+      cert_subject: O=Orderer/L=51.50,-0.13,London/C=GB
+      component_country: UK
+      component_state: London
+      component_location: London
+      ca_url: ca.xnc-net.xncambassador.blockchain.liubaninc.cn:8443
+
+    orderers:
+      name: orderer0-orderer1-
