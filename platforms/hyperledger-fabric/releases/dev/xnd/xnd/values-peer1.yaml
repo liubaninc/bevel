@@ -1,0 +1,68 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: xnd-peer1
+  namespace: xnd-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: xnd-peer1
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/peernode    
+  values:
+    metadata:
+      namespace: xnd-net
+      images:
+        couchdb: couchdb:3.1
+        peer: hyperledger/fabric-peer:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+      deployment:
+        
+    peer:
+      name: peer1
+      gossippeeraddress: peer1.xnd-net:7051
+      gossipexternalendpoint: peer1.xnd-net.xndambassador.blockchain.liubaninc.cn:8443
+      localmspid: xndMSP
+      loglevel: info
+      tlsstatus: true
+      builder: hyperledger/fabric-ccenv:2.2.2
+      couchdb:
+        username: xnd-user
+
+    storage:
+      peer:
+        storageclassname: xndsc
+        storagesize: 512Mi
+      couchdb:
+        storageclassname: xndsc
+        storagesize: 1Gi
+
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devxnd-net-auth
+      secretprefix: secretsv2/data/crypto/peerOrganizations/xnd-net/peers/peer1.xnd-net
+      secretambassador: secretsv2/data/crypto/peerOrganizations/xnd-net/ambassador
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+      secretcouchdbpass: secretsv2/data/credentials/xnd-net/couchdb/xnd?user
+
+    service:
+      servicetype: ClusterIP
+      ports:
+        grpc:
+          clusteripport: 7051
+        events:
+          clusteripport: 7053
+        couchdb:
+          clusteripport: 5984
+          
+    proxy:
+      provider: "haproxy"
+      external_url_suffix: xndambassador.blockchain.liubaninc.cn
