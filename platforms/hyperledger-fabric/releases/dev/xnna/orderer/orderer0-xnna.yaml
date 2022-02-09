@@ -1,0 +1,143 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: xnna-orderer0
+  namespace: xnna-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: xnna-orderer0
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/orderernode
+  values:
+    metadata:
+      namespace: xnna-net
+      images:
+        orderer: hyperledger/fabric-orderer:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+      deployment:
+    orderer:
+      name: orderer0
+      loglevel: info
+      localmspid: xnnaMSP
+      tlsstatus: true
+      keepaliveserverinterval: 10s
+    
+    consensus:
+      name: kafka
+
+    storage:
+      storageclassname: xnnasc
+      storagesize: 512Mi  
+
+    service:
+      servicetype: ClusterIP
+      ports:
+        grpc:
+          clusteripport: 7050
+
+    vault:
+      address: http://101.36.106.59:8200
+      role: vault-role
+      authpath: devxnna-net-auth
+      secretprefix: secretsv2/data/crypto/ordererOrganizations/xnna-net/orderers/orderer0.xnna-net
+      imagesecretname: regcred
+      serviceaccountname: vault-auth
+    kafka:
+      readinesscheckinterval: 10
+      readinessthreshold: 10
+      brokers:
+      - kafka-0.broker.xnna-net.svc.cluster.local:9092
+      - kafka-1.broker.xnna-net.svc.cluster.local:9092
+      - kafka-2.broker.xnna-net.svc.cluster.local:9092
+      - kafka-3.broker.xnna-net.svc.cluster.local:9092
+
+    proxy:
+      provider: haproxy
+      external_url_suffix: xnnaambassador.blockchain.liubaninc.cn
+
+    genesis: |-
+      CiIaIP9ak5B2Y1Bcl9KzXb0BcePMpo/3PL+iiR3YSW/xf+4qEo8iCowiCokiCngKWggBEAEaBgj9
+      pI2QBiIKc3lzY2hhbm5lbCpAMTUwNWJiZjQ0YTEzY2NkMzc1YjcxY2QzMmI2OWRhMTcyYzQ0OTVh
+      NDJjNjk0MzI2YTk4YzMyOGQyMTlhNzY5MhIaEhhwYcK8+6W3/aWQnYPqE40VlGXJMHgQaZASjCEK
+      iSEShiESqRwKB09yZGVyZXISnRwS7BcKB3hubmFNU1AS4BcaiBYKA01TUBKAFhL1FRLyFQoHeG5u
+      YU1TUBLLBi0tLS0tQkVHSU4gQ0VSVElGSUNBVEUtLS0tLQpNSUlDUURDQ0FlYWdBd0lCQWdJVU5T
+      SktEMUJzaDFLYzhGMXNkOG9DODkwOUE5Y3dDZ1lJS29aSXpqMEVBd0l3CmZqRUxNQWtHQTFVRUJo
+      TUNSMEl4RHpBTkJnTlZCQWdNQmt4dmJtUnZiakVQTUEwR0ExVUVCd3dHVEc5dVpHOXUKTVJBd0Rn
+      WURWUVFLREFkUGNtUmxjbVZ5TVRzd09RWURWUVFERERKallTNTRibTVoTFc1bGRDNTRibTVoWVcx
+      aQpZWE56WVdSdmNpNWliRzlqYTJOb1lXbHVMbXhwZFdKaGJtbHVZeTVqYmpBZUZ3MHlNakF5TURr
+      d05USTFOVFphCkZ3MHlOREV4TWprd05USTFOVFphTUg0eEN6QUpCZ05WQkFZVEFrZENNUTh3RFFZ
+      RFZRUUlEQVpNYjI1a2IyNHgKRHpBTkJnTlZCQWNNQmt4dmJtUnZiakVRTUE0R0ExVUVDZ3dIVDNK
+      a1pYSmxjakU3TURrR0ExVUVBd3d5WTJFdQplRzV1WVMxdVpYUXVlRzV1WVdGdFltRnpjMkZrYjNJ
+      dVlteHZZMnRqYUdGcGJpNXNhWFZpWVc1cGJtTXVZMjR3CldUQVRCZ2NxaGtqT1BRSUJCZ2dxaGtq
+      T1BRTUJCd05DQUFTdnJsZm5kdnVCa3hJR1hWNTNvcXB1cHVpcDhsSVcKK1pZNW9kRmZZNUhwVFdj
+      bElZbldtOWcrZFpnM1YxWHg5Tm5Zclo3MDJuVlh3UVJhMytyWWFISlRvMEl3UURBUApCZ05WSFJN
+      QkFmOEVCVEFEQVFIL01BNEdBMVVkRHdFQi93UUVBd0lCcGpBZEJnTlZIUTRFRmdRVXd5dHZDaFdo
+      CktvdHI3R2pHZTBHejVJM3hKQ0F3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUloQUl3Tzd2RmhwdkpT
+      U3Z0bDI2V2oKeDAvNkJ1UHljcUpVODlIeDUzM3gwUkZaQWlBdGlHb0pSZzVEOEFvVWY5M2ZmcFhm
+      K3NCVWVUWWdpcnZxUHVYawpBNU1wQ1E9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCiK6CC0t
+      LS0tQkVHSU4gQ0VSVElGSUNBVEUtLS0tLQpNSUlDOHpDQ0FwcWdBd0lCQWdJVUk2dmtQQnRRS1JV
+      VDZmZTlLU3ZGU1Y5QkNpOHdDZ1lJS29aSXpqMEVBd0l3CmZqRUxNQWtHQTFVRUJoTUNSMEl4RHpB
+      TkJnTlZCQWdNQmt4dmJtUnZiakVQTUEwR0ExVUVCd3dHVEc5dVpHOXUKTVJBd0RnWURWUVFLREFk
+      UGNtUmxjbVZ5TVRzd09RWURWUVFERERKallTNTRibTVoTFc1bGRDNTRibTVoWVcxaQpZWE56WVdS
+      dmNpNWliRzlqYTJOb1lXbHVMbXhwZFdKaGJtbHVZeTVqYmpBZUZ3MHlNakF5TURrd05USTVNREJh
+      CkZ3MHlNekF5TURrd05UTTBNREJhTUdVeEN6QUpCZ05WQkFZVEFrZENNUnN3R1FZRFZRUUhFeEkx
+      TVM0MU1DOHQKTUM0eE15OU1iMjVrYjI0eEVEQU9CZ05WQkFvVEIwOXlaR1Z5WlhJeERqQU1CZ05W
+      QkFzVEJXRmtiV2x1TVJjdwpGUVlEVlFRRERBNUJaRzFwYmtCNGJtNWhMVzVsZERCWk1CTUdCeXFH
+      U000OUFnRUdDQ3FHU000OUF3RUhBMElBCkJCUWtzcFlTeExFcTBaMXc5S253V3RvVmN6QWltMHdL
+      UnhiQjkzYUsxOHN6WmczK0hkT3pIdXBmK3cwa2dUcDQKTDdMdjNsRTVnZXNvZURid1ROOHQyVTZq
+      Z2dFTk1JSUJDVEFPQmdOVkhROEJBZjhFQkFNQ0I0QXdEQVlEVlIwVApBUUgvQkFJd0FEQWRCZ05W
+      SFE0RUZnUVUwL3V0dTQzMGkwYzZta3Q3bnRDV3NxYXRscHN3SHdZRFZSMGpCQmd3CkZvQVV3eXR2
+      Q2hXaEtvdHI3R2pHZTBHejVJM3hKQ0F3SkFZRFZSMFJCQjB3RzRJWlkyRXRkRzl2YkhNdE5tSTIK
+      WXpVNE5tUm1OUzFqT1hab1p6Q0JnZ1lJS2dNRUJRWUhDQUVFZG5zaVlYUjBjbk1pT25zaVlXSmhZ
+      eTVwYm1sMApJam9pZEhKMVpTSXNJbUZrYldsdUlqb2lkSEoxWlNJc0ltaG1Ma0ZtWm1sc2FXRjBh
+      Vzl1SWpvaUlpd2lhR1l1ClJXNXliMnhzYldWdWRFbEVJam9pUVdSdGFXNUFlRzV1WVMxdVpYUWlM
+      Q0pvWmk1VWVYQmxJam9pWVdSdGFXNGkKZlgwd0NnWUlLb1pJemowRUF3SURSd0F3UkFJZ0FNVzR0
+      V0s0bjkvaWo0OTQrTzgxMHlXWUV6TEFnZndHeEtRZgpQem5rQ0lVQ0lDRWcyc2RGZWF5WlFQbE5F
+      b1JHcTdrOU82d3JQbnBWWEV2Qk1zbkhPejYrCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0KQg4K
+      BFNIQTISBlNIQTI1NkrLBi0tLS0tQkVHSU4gQ0VSVElGSUNBVEUtLS0tLQpNSUlDUURDQ0FlYWdB
+      d0lCQWdJVU5TSktEMUJzaDFLYzhGMXNkOG9DODkwOUE5Y3dDZ1lJS29aSXpqMEVBd0l3CmZqRUxN
+      QWtHQTFVRUJoTUNSMEl4RHpBTkJnTlZCQWdNQmt4dmJtUnZiakVQTUEwR0ExVUVCd3dHVEc5dVpH
+      OXUKTVJBd0RnWURWUVFLREFkUGNtUmxjbVZ5TVRzd09RWURWUVFERERKallTNTRibTVoTFc1bGRD
+      NTRibTVoWVcxaQpZWE56WVdSdmNpNWliRzlqYTJOb1lXbHVMbXhwZFdKaGJtbHVZeTVqYmpBZUZ3
+      MHlNakF5TURrd05USTFOVFphCkZ3MHlOREV4TWprd05USTFOVFphTUg0eEN6QUpCZ05WQkFZVEFr
+      ZENNUTh3RFFZRFZRUUlEQVpNYjI1a2IyNHgKRHpBTkJnTlZCQWNNQmt4dmJtUnZiakVRTUE0R0Ex
+      VUVDZ3dIVDNKa1pYSmxjakU3TURrR0ExVUVBd3d5WTJFdQplRzV1WVMxdVpYUXVlRzV1WVdGdFlt
+      RnpjMkZrYjNJdVlteHZZMnRqYUdGcGJpNXNhWFZpWVc1cGJtTXVZMjR3CldUQVRCZ2NxaGtqT1BR
+      SUJCZ2dxaGtqT1BRTUJCd05DQUFTdnJsZm5kdnVCa3hJR1hWNTNvcXB1cHVpcDhsSVcKK1pZNW9k
+      RmZZNUhwVFdjbElZbldtOWcrZFpnM1YxWHg5Tm5Zclo3MDJuVlh3UVJhMytyWWFISlRvMEl3UURB
+      UApCZ05WSFJNQkFmOEVCVEFEQVFIL01BNEdBMVVkRHdFQi93UUVBd0lCcGpBZEJnTlZIUTRFRmdR
+      VXd5dHZDaFdoCktvdHI3R2pHZTBHejVJM3hKQ0F3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUloQUl3
+      Tzd2RmhwdkpTU3Z0bDI2V2oKeDAvNkJ1UHljcUpVODlIeDUzM3gwUkZaQWlBdGlHb0pSZzVEOEFv
+      VWY5M2ZmcFhmK3NCVWVUWWdpcnZxUHVYawpBNU1wQ1E9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0t
+      LS0tChoGQWRtaW5zIjEKBkFkbWlucxInEh0IARIZEggSBggBEgIIABoNEgsKB3hubmFNU1AQARoG
+      QWRtaW5zIjQKC0VuZG9yc2VtZW50EiUSGwgBEhcSCBIGCAESAggAGgsSCQoHeG5uYU1TUBoGQWRt
+      aW5zIjAKB1JlYWRlcnMSJRIbCAESFxIIEgYIARICCAAaCxIJCgd4bm5hTVNQGgZBZG1pbnMiMAoH
+      V3JpdGVycxIlEhsIARIXEggSBggBEgIIABoLEgkKB3hubmFNU1AaBkFkbWlucyoGQWRtaW5zGiIK
+      CUJhdGNoU2l6ZRIVEgsIChCAgIAxGICAQBoGQWRtaW5zGh4KDEJhdGNoVGltZW91dBIOEgQKAjJz
+      GgZBZG1pbnMaHwoTQ2hhbm5lbFJlc3RyaWN0aW9ucxIIGgZBZG1pbnMaJAoMQ2FwYWJpbGl0aWVz
+      EhQSCgoICgRWMl8wEgAaBkFkbWlucxrcAQoMS2Fma2FCcm9rZXJzEssBEsABCi5rYWZrYS0wLmJy
+      b2tlci54bm5hLW5ldC5zdmMuY2x1c3Rlci5sb2NhbDo5MDkyCi5rYWZrYS0xLmJyb2tlci54bm5h
+      LW5ldC5zdmMuY2x1c3Rlci5sb2NhbDo5MDkyCi5rYWZrYS0yLmJyb2tlci54bm5hLW5ldC5zdmMu
+      Y2x1c3Rlci5sb2NhbDo5MDkyCi5rYWZrYS0zLmJyb2tlci54bm5hLW5ldC5zdmMuY2x1c3Rlci5s
+      b2NhbDo5MDkyGgZBZG1pbnMaIgoNQ29uc2Vuc3VzVHlwZRIREgcKBWthZmthGgZBZG1pbnMiKgoP
+      QmxvY2tWYWxpZGF0aW9uEhcSDQgDEgkKB1dyaXRlcnMaBkFkbWlucyIiCgdSZWFkZXJzEhcSDQgD
+      EgkKB1JlYWRlcnMaBkFkbWlucyIiCgdXcml0ZXJzEhcSDQgDEgkKB1dyaXRlcnMaBkFkbWlucyIi
+      CgZBZG1pbnMSGBIOCAMSCgoGQWRtaW5zEAIaBkFkbWlucyoGQWRtaW5zEscBCgtDb25zb3J0aXVt
+      cxK3ARJtCg54bm5hQ29uc29ydGl1bRJbGkAKFUNoYW5uZWxDcmVhdGlvblBvbGljeRInEgwIAxII
+      CgZBZG1pbnMaFy9DaGFubmVsL09yZGVyZXIvQWRtaW5zKhcvQ2hhbm5lbC9PcmRlcmVyL0FkbWlu
+      cyItCgZBZG1pbnMSIxIICAESBBICEgAaFy9DaGFubmVsL09yZGVyZXIvQWRtaW5zKhcvQ2hhbm5l
+      bC9PcmRlcmVyL0FkbWlucxomChBIYXNoaW5nQWxnb3JpdGhtEhISCAoGU0hBMjU2GgZBZG1pbnMa
+      LQoZQmxvY2tEYXRhSGFzaGluZ1N0cnVjdHVyZRIQEgYI/////w8aBkFkbWlucxqcAQoQT3JkZXJl
+      ckFkZHJlc3NlcxKHARJsCjRvcmRlcmVyMC54bm5hYW1iYXNzYWRvci5ibG9ja2NoYWluLmxpdWJh
+      bmluYy5jbjo4NDQzCjRvcmRlcmVyMS54bm5hYW1iYXNzYWRvci5ibG9ja2NoYWluLmxpdWJhbmlu
+      Yy5jbjo4NDQzGhcvQ2hhbm5lbC9PcmRlcmVyL0FkbWlucxokCgxDYXBhYmlsaXRpZXMSFBIKCggK
+      BFYyXzASABoGQWRtaW5zIiIKBkFkbWlucxIYEg4IAxIKCgZBZG1pbnMQAhoGQWRtaW5zIiIKB1Jl
+      YWRlcnMSFxINCAMSCQoHUmVhZGVycxoGQWRtaW5zIiIKB1dyaXRlcnMSFxINCAMSCQoHV3JpdGVy
+      cxoGQWRtaW5zKgZBZG1pbnMaDgoECgIKAAoACgAKAAoA
