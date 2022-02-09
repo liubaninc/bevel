@@ -39,12 +39,12 @@ spec:
     orderer:
       address: orderer0.xncambassador.blockchain.liubaninc.cn:8443
     anchorstx: |-
-      Co0DChgKFggCGgYIxPuMkAYiCmFsbGNoYW5uZWwS8AIK7QIKCmFsbGNoYW5uZWwSXxJdCgtBcHBs
-      aWNhdGlvbhJOCAESSgoGeG5kTVNQEkAaBwoDTVNQEgAiDwoLRW5kb3JzZW1lbnQSACILCgdSZWFk
-      ZXJzEgAiCwoHV3JpdGVycxIAIgoKBkFkbWlucxIAGv0BEvoBCgtBcHBsaWNhdGlvbhLqAQgBEuUB
+      Co0DChgKFggCGgYIgYWNkAYiCmFsbGNoYW5uZWwS8AIK7QIKCmFsbGNoYW5uZWwSXxJdCgtBcHBs
+      aWNhdGlvbhJOCAESSgoGeG5kTVNQEkAaBwoDTVNQEgAiCwoHUmVhZGVycxIAIgsKB1dyaXRlcnMS
+      ACIKCgZBZG1pbnMSACIPCgtFbmRvcnNlbWVudBIAGv0BEvoBCgtBcHBsaWNhdGlvbhLqAQgBEuUB
       CgZ4bmRNU1AS2gEIARqNAQoLQW5jaG9yUGVlcnMSfhJ0CjgKM3BlZXIwLnhuZC1uZXQueG5kYW1i
       YXNzYWRvci5ibG9ja2NoYWluLmxpdWJhbmluYy5jbhD7QQo4CjNwZWVyMS54bmQtbmV0LnhuZGFt
-      YmFzc2Fkb3IuYmxvY2tjaGFpbi5saXViYW5pbmMuY24Q+0EaBkFkbWlucxoHCgNNU1ASACIPCgtF
-      bmRvcnNlbWVudBIAIgsKB1JlYWRlcnMSACILCgdXcml0ZXJzEgAiCgoGQWRtaW5zEgAqBkFkbWlu
+      YmFzc2Fkb3IuYmxvY2tjaGFpbi5saXViYW5pbmMuY24Q+0EaBkFkbWlucxoHCgNNU1ASACILCgdS
+      ZWFkZXJzEgAiCwoHV3JpdGVycxIAIgoKBkFkbWlucxIAIg8KC0VuZG9yc2VtZW50EgAqBkFkbWlu
       cw==
 
