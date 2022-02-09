@@ -39,7 +39,7 @@ spec:
     orderer:
       address: orderer0.xncambassador.blockchain.liubaninc.cn:8443
     anchorstx: |-
-      Co0DChgKFggCGgYI2O+MkAYiCmFsbGNoYW5uZWwS8AIK7QIKCmFsbGNoYW5uZWwSXxJdCgtBcHBs
+      Co0DChgKFggCGgYIxPuMkAYiCmFsbGNoYW5uZWwS8AIK7QIKCmFsbGNoYW5uZWwSXxJdCgtBcHBs
       aWNhdGlvbhJOCAESSgoGeG5kTVNQEkAaBwoDTVNQEgAiDwoLRW5kb3JzZW1lbnQSACILCgdSZWFk
       ZXJzEgAiCwoHV3JpdGVycxIAIgoKBkFkbWlucxIAGv0BEvoBCgtBcHBsaWNhdGlvbhLqAQgBEuUB
       CgZ4bmRNU1AS2gEIARqNAQoLQW5jaG9yUGVlcnMSfhJ0CjgKM3BlZXIwLnhuZC1uZXQueG5kYW1i
