@@ -1,0 +1,33 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: xnc-cacerts-job
+  namespace: xnc-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: xnc-cacerts-job
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/generate_cacerts
+  values:
+    metadata:
+      name: xnc
+      component_name: xnc-net
+      namespace: xnc-net    
+      images:
+        fabrictools: hyperledger/fabric-tools:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devxnc-net-auth
+      secretcryptoprefix: secretsv2/data/crypto/ordererOrganizations/xnc-net/ca
+      secretcredentialsprefix: secretsv2/data/credentials/xnc-net/ca/xnc
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+      
+    ca:
+      subject: /C=GB/ST=London/L=London/O=Orderer/CN=ca.xnc-net.xncambassador.blockchain.liubaninc.cn
