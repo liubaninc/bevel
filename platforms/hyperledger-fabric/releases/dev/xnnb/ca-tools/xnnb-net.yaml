@@ -1,0 +1,77 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: xnnb-net-ca-tools
+  namespace: xnnb-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: xnnb-net-ca-tools
+  chart:
+    git: https://github.com/liubaninc/bevel.git
+    ref: local11
+    path: platforms/hyperledger-fabric/charts/catools
+  values:
+    metadata:
+      namespace: xnnb-net
+      name: ca-tools
+      component_type: peer
+      org_name: xnnb
+      proxy: haproxy
+    annotations:  
+      service:
+        - example1: example2
+      pvc:
+      deployment:
+    replicaCount: 1
+
+    image:
+      repository: hyperledger/fabric-ca-tools
+      tag: 1.2.1
+      pullPolicy: IfNotPresent
+      alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+      
+    storage:
+      storageclassname: xnnbsc
+      storagesize: 512Mi
+    
+    vault:
+      role: vault-role
+      address: http://101.36.106.59:8200
+      authpath: devxnnb-net-auth
+      secretmsp: secretsv2/data/crypto/peerOrganizations/xnnb-net/users/admin/msp
+      secrettls: secretsv2/data/crypto/peerOrganizations/xnnb-net/users/admin/tls
+      secretorderer: secretsv2/data/crypto/peerOrganizations/xnnb-net/orderers
+      secretpeer: secretsv2/data/crypto/peerOrganizations/xnnb-net/peers
+      secretpeerorderertls: secretsv2/data/crypto/peerOrganizations/xnnb-net/orderer/tls
+      secretambassador: secretsv2/data/crypto/peerOrganizations/xnnb-net/ambassador
+      secretcert: secretsv2/data/crypto/peerOrganizations/xnnb-net/ca?ca.xnnb-net-cert.pem
+      secretkey: secretsv2/data/crypto/peerOrganizations/xnnb-net/ca?xnnb-net-CA.key
+      secretcouchdb: secretsv2/data/credentials/xnnb-net/couchdb/xnnb
+      secretconfigfile: secretsv2/data/crypto/peerOrganizations/xnnb-net/msp/config
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+    
+    org_data:
+      external_url_suffix: xnnbambassador.blockchain.liubaninc.cn
+      component_subject: O=xnnb,OU=xnnb,L=47.38/8.54/Zurich,C=CH
+      cert_subject: O=xnnb/OU=xnnb/L=47.38,8.54,Zurich/C=CH
+      component_country: CH
+      component_state: Zurich
+      component_location: Zurich
+      ca_url: ca.xnnb-net.xnnbambassador.blockchain.liubaninc.cn:8443
+
+    orderers:
+      name: orderer0-orderer1-
+    orderers_info:
+      - name: orderer0
+        path: "certs/orderer0-ca.crt"
+      - name: orderer1
+        path: "certs/orderer1-ca.crt"
+
+    peers:
+      name: peer0,-peer1,-      
+    peer_count: "2"
+
+    checks:
+      refresh_cert_value: False
