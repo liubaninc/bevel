@@ -73,4 +73,4 @@
     gitops: "{{ org.gitops }}"
     GIT_RESET_PATH: "platforms/hyperledger-fabric/configuration"
     msg: "[ci skip] Pushing chaincode approve files"
-  when: approve_chaincode.resources|length == 0
+  when: peer.chaincode is defined and approve_chaincode.resources|length == 0

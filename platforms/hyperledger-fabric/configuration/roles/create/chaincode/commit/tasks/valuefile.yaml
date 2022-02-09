@@ -84,4 +84,4 @@
     gitops: "{{ org.gitops }}"
     GIT_RESET_PATH: "platforms/hyperledger-fabric/configuration"
     msg: "[ci skip] Pushing chaincode commit files"
-  when: commit_chaincode.resources|length == 0
+  when: peer.chaincode is defined and commit_chaincode.resources|length == 0
