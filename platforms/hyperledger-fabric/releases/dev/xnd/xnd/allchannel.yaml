@@ -40,11 +40,11 @@ spec:
     orderer:
       address: orderer0.xncambassador.blockchain.liubaninc.cn:8443
     channeltx: |-
-      Cp8DChgKFggCGgYI2O+MkAYiCmFsbGNoYW5uZWwSggMK/wIKCmFsbGNoYW5uZWwSLRIbCgtBcHBs
+      Cp8DChgKFggCGgYIxPuMkAYiCmFsbGNoYW5uZWwSggMK/wIKCmFsbGNoYW5uZWwSLRIbCgtBcHBs
       aWNhdGlvbhIMEgoKBnhuZE1TUBIAGg4KCkNvbnNvcnRpdW0SABrBAhKdAgoLQXBwbGljYXRpb24S
-      jQIIARIKCgZ4bmRNU1ASABokCgxDYXBhYmlsaXRpZXMSFBIKCggKBFYyXzASABoGQWRtaW5zIiIK
-      B1JlYWRlcnMSFxINCAMSCQoHUmVhZGVycxoGQWRtaW5zIiIKB1dyaXRlcnMSFxINCAMSCQoHV3Jp
-      dGVycxoGQWRtaW5zIiIKBkFkbWlucxIYEg4IAxIKCgZBZG1pbnMQAhoGQWRtaW5zIiwKC0VuZG9y
-      c2VtZW50Eh0SEwgDEg8KC0VuZG9yc2VtZW50EAIaBkFkbWlucyI1ChRMaWZlY3ljbGVFbmRvcnNl
+      jQIIARIKCgZ4bmRNU1ASABokCgxDYXBhYmlsaXRpZXMSFBIKCggKBFYyXzASABoGQWRtaW5zIjUK
+      FExpZmVjeWNsZUVuZG9yc2VtZW50Eh0SEwgDEg8KC0VuZG9yc2VtZW50EAIaBkFkbWlucyIiCgdS
+      ZWFkZXJzEhcSDQgDEgkKB1JlYWRlcnMaBkFkbWlucyIiCgdXcml0ZXJzEhcSDQgDEgkKB1dyaXRl
+      cnMaBkFkbWlucyIiCgZBZG1pbnMSGBIOCAMSCgoGQWRtaW5zEAIaBkFkbWlucyIsCgtFbmRvcnNl
       bWVudBIdEhMIAxIPCgtFbmRvcnNlbWVudBACGgZBZG1pbnMqBkFkbWlucxofCgpDb25zb3J0aXVt
       EhESDwoNeG5jQ29uc29ydGl1bQ==
