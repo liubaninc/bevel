@@ -1,0 +1,29 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: m1-m0-tessera-job
+  namespace: m1-quo
+  annotations:
+    flux.weave.works/automated: "false"
+spec:
+  releaseName: m1-m0-tessera-job
+  chart:
+    path: platforms/quorum/charts/tessera_key_mgmt
+    git: https://github.com/liubaninc/bevel.git
+    ref: local12
+  values:
+    peer:
+      name: m1-m0  
+    metadata:
+      name: m1-m0-tessera-job
+      namespace: m1-quo    
+    image:      
+      repository: quorumengineering/tessera:21.4.0
+      pullSecret: regcred
+    vault:
+      address: http://152.32.210.47:8200
+      authpath: quorumm1
+      keyprefix: m1-quo/crypto
+      role: vault-role
+      serviceaccountname: vault-auth
+      tmprefix: secretsv2/data/m1-quo/crypto
