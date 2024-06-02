@@ -1,0 +1,87 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: default
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nfs-client-provisioner
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nfs-client-provisioner-runner
+  namespace: default
+rules:
+  -  apiGroups: [""]
+     resources: ["persistentvolumes"]
+     verbs: ["get", "list", "watch", "create", "delete"]
+  -  apiGroups: [""]
+     resources: ["persistentvolumeclaims"]
+     verbs: ["get", "list", "watch", "update"]
+  -  apiGroups: ["storage.k8s.io"]
+     resources: ["storageclasses"]
+     verbs: ["get", "list", "watch"]
+  -  apiGroups: [""]
+     resources: ["events"]
+     verbs: ["watch", "create", "update", "patch"]
+  -  apiGroups: [""]
+     resources: ["services", "endpoints"]
+     verbs: ["get","create","list", "watch","update"]
+  -  apiGroups: ["extensions"]
+     resources: ["podsecuritypolicies"]
+     resourceNames: ["nfs-provisioner"]
+     verbs: ["use"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: run-nfs-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: nfs-client-provisioner
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: nfs-client-provisioner-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-client-provisioner
+  namespace: default
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nfs-client-provisioner
+  template:
+    metadata:
+      labels:
+        app: nfs-client-provisioner
+    spec:
+      serviceAccount: nfs-client-provisioner    #指定账户
+      containers:
+        - name: nfs-client-provisioner
+          #image: registry.cn-hangzhou.aliyuncs.com/open-ali/nfs-client-provisioner
+          image: gcr.io/k8s-staging-sig-storage/nfs-subdir-external-provisioner:v4.0.0
+          volumeMounts:
+            - name: nfs-client-root
+              mountPath:  /persistentvolumes   #指定容器内的挂载目录
+          env:
+            - name: PROVISIONER_NAME            #这是这个容器内置的变量
+              value: kubernetes.io/aws-ebs     #这是上面变量的值（名字）
+            - name: NFS_SERVER                  #内置变量，用于指定nfs服务的IP
+              value: 152.32.210.47
+            - name: NFS_PATH                    #内置变量，指定的是nfs共享的目录
+              value: /home/ubuntu/nfs
+      volumes:                                  #这下面是指定上面挂载到容器内的nfs的路径及IP
+        - name: nfs-client-root
+          nfs:
+            server: 152.32.210.47
+            path: /home/ubuntu/nfs

@@ -822,6 +822,7 @@
             "p2p":  { "$ref":"#/definitions/shared_port_ambassador"},
             "rpc":  { "$ref":"#/definitions/shared_port_ambassador"},
             "transaction_manager":  { "$ref":"#/definitions/quorum_tm_port_ambassador"},
+            "cakeshop":  { "$ref":"#/definitions/shared_port_ambassador"},
             "raft": { "$ref":"#/definitions/shared_port_ambassador","description":"Only used if consensus = 'raft'"},
             "db": { "$ref":"#/definitions/shared_port","description":" Only used if transaction_manager = tessera"}
             }

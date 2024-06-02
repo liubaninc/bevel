@@ -122,17 +122,17 @@
     # Create Organization crypto materials for new organization
     - name: "Crypto"
       include_role:
-        name: "create/crypto/peer"
+        name: "create/ca-tools/peer"
       vars:
         component_name: "{{ item.name | lower}}-net"
+        component: "{{ item.name | lower}}"
         component_type: "{{ item.type | lower}}"
-        org_name: "{{ item.name }}"
-        services: "{{ item.services }}"
-        subject: "{{ item.subject }}"
-        ca_url: "{{ item.ca_data.url }}"
-        cert_subject: "{{ item.subject | regex_replace('/', ';') | regex_replace(',', '/') | regex_replace(';', ',') }}" # replace , to / and / to , for certpath
+        component_services: "{{ item.services }}"
         kubernetes: "{{ item.k8s }}"
         vault: "{{ item.vault }}"
+        ca: "{{ item.services.ca }}"
+        gitops: "{{ item.gitops }}"
+        values_dir: "{{playbook_dir}}/../../../{{item.gitops.release_dir}}/{{ item.name | lower }}"
       loop: "{{ network['organizations'] }}"
       when: item.type == 'peer' and item.org_status == 'new'
 

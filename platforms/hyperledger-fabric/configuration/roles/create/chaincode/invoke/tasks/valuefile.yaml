@@ -120,4 +120,6 @@
     gitops: "{{ org.gitops }}"
     GIT_RESET_PATH: "platforms/hyperledger-fabric/configuration"
     msg: "[ci skip] Pushing chaincode invocation files"
-  when: invoke_chaincode.resources|length == 0 or add_new_org == 'true'
+  when:
+    - peer.chaincode is defined
+    - invoke_chaincode.resources|length == 0 or add_new_org == 'true'
